@@ -1,0 +1,464 @@
+/* ===== ОСНОВНЫЕ СТИЛИ ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #ffffff;
+    color: #1e2b3c;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Стили для меню */
+.sidebar {
+    width: 240px;
+    background-color: #ffffff;
+    border-right: 1px solid #e9ecef;
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex-shrink: 0;
+    height: 100vh;
+    position: fixed; /* Фиксируем меню слева */
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+}
+
+/* Основной контент с отступом под фиксированное меню */
+.content {
+    margin-left: 240px; /* Отступ равен ширине меню */
+    background-color: #ffffff;
+    padding: 2.5rem 3rem;
+    min-height: 100vh;
+    flex: 1;
+}
+
+/* Футер с отступом под меню */
+.site-footer {
+    margin-left: 240px; /* Отступ равен ширине меню */
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-top: 1px solid #e9ecef;
+    padding: 1.5rem 2rem;
+    width: calc(100% - 240px); /* Ширина минус меню */
+}
+
+/* ===== СТИЛИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ===== */
+.home-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0; /* Убираем лишние отступы */
+}
+
+/* Заголовок страницы */
+.page-header {
+    text-align: left; /* Выравнивание по левому краю */
+    margin-bottom: 2.5rem;
+    padding: 0;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #0f2637;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    border-bottom: 2px solid #e0f2fe;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+/* Сетка модулей */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Карточка модуля */
+.module-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.module-card:hover {
+    border-color: #b9dcf2;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-4px);
+}
+
+.module-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background-color: #f8fcff;
+    width: fit-content;
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 1px solid #e0f2fe;
+}
+
+.module-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #0f2637;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.module-description {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+/* Теги функций */
+.module-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-tag {
+    background-color: #f8fcff;
+    color: #0369a1;
+    font-size: 0.85rem;
+    padding: 0.25rem 1rem;
+    border-radius: 20px;
+    border: 1px solid #e0f2fe;
+    font-weight: 400;
+}
+
+/* Кнопка модуля */
+.module-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 40px;
+    color: #0f2637;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-top: auto;
+    width: fit-content;
+}
+
+.module-button:hover {
+    border-color: #7fc1e5;
+    background-color: #f5fcff;
+    color: #0369a1;
+}
+
+.button-arrow {
+    margin-left: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.module-button:hover .button-arrow {
+    transform: translateX(4px);
+}
+
+/* Секция с дополнительной информацией */
+.info-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.info-card {
+    background-color: #f9fafc;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: border 0.2s;
+}
+
+.info-card:hover {
+    border-color: #b9dcf2;
+}
+
+.info-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #0f2637;
+    margin-bottom: 0.75rem;
+}
+
+.info-text {
+    color: #64748b;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* ===== СТИЛИ ДЛЯ ПУНКТОВ МЕНЮ ===== */
+.logo {
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #1e2b3c;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0f2fe;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.7rem 0.9rem;
+    text-decoration: none;
+    color: #4a5a6e;
+    font-weight: 400;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    background-color: #f8fcff;
+    border-color: #cbd5e1;
+    color: #0b2b4a;
+}
+
+.nav-item.active {
+    background-color: #f0f9ff;
+    border-color: #b9dcf2;
+    color: #0369a1;
+    font-weight: 500;
+}
+
+.nav-divider {
+    height: 1px;
+    background-color: #e9ecef;
+    margin: 0.75rem 0;
+}
+
+.nav-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+/* ===== СТИЛИ ДЛЯ ФУТЕРА ===== */
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+}
+
+.footer-copyright {
+    color: #68788c;
+    font-size: 0.95rem;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.footer-link {
+    color: #4a5a6e;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid transparent;
+}
+
+.footer-link:hover {
+    color: #0369a1;
+    border-bottom-color: #b9dcf2;
+}
+
+.footer-separator {
+    color: #cbd5e1;
+    font-weight: 300;
+    margin: 0 0.25rem;
+}
+
+.footer-colors {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f9fafc;
+    padding: 0.4rem 1rem;
+    border-radius: 40px;
+    border: 1px solid #e9ecef;
+}
+
+.color-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.color-dot-blue {
+    background-color: #b9dcf2;
+    border: 1px solid #7fc1e5;
+}
+
+.color-dot-gray {
+    background-color: #e9ecef;
+    border: 1px solid #cbd5e1;
+}
+
+.color-label {
+    color: #4a5a6e;
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 220px;
+        padding: 1.5rem 1rem;
+    }
+    
+    .content {
+        margin-left: 220px;
+        padding: 2rem 2rem;
+    }
+    
+    .site-footer {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+    
+    .modules-grid {
+        gap: 1.5rem;
+    }
+    
+    .module-card {
+        padding: 1.5rem;
+    }
+    
+    .module-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1rem 1.5rem;
+    }
+    
+    .content {
+        margin-left: 0;
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .site-footer {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .modules-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .page-header {
+        text-align: center;
+    }
+    
+    .module-icon {
+        font-size: 2.5rem;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+    
+    .footer-colors {
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .module-card {
+        padding: 1.25rem;
+    }
+    
+    .module-features {
+        gap: 0.35rem;
+    }
+    
+    .feature-tag {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.75rem;
+    }
+    
+    .module-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .footer-separator {
+        display: none;
+    }
+}

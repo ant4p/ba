@@ -1,0 +1,19 @@
+<aside class="sidebar">
+    <div class="logo">✦ Модуль бизнес-аналитики</div>
+    
+    <nav class="nav-menu">
+        <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Главная</a>
+        <a href="{% url 'src:graphs' %}" class="nav-item {% if request.resolver_match.url_name == 'graphs' %}active{% endif %}">Графики</a>
+        <a href="{% url 'src:tables' %}" class="nav-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">Таблицы</a>
+        <a href="{% url 'src:analytics' %}" class="nav-item {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">Аналитика</a>
+        <a href="{% url 'src:nets' %}" class="nav-item {% if request.resolver_match.url_name == 'nets' %}active{% endif %}">Связи</a>
+        <div class="nav-divider"></div>
+        <a href="#" class="nav-item">Настройки</a>
+        <a href="#" class="nav-item">Профиль</a>
+    </nav>
+
+    <div class="nav-footer">
+        <a href="#" class="nav-item">Поддержка</a>
+        <a href="#" class="nav-item">Выйти</a>
+    </div>
+</aside>

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Модуль бизнес-аналитики</h1>
+        <p class="page-subtitle">Выберите раздел для работы с данными</p>
+    </div>
+
+    <!-- Сетка с модулями -->
+    <div class="modules-grid">
+        <!-- Модуль Графики -->
+        <div class="module-card">
+            <div class="module-icon">📊</div>
+            <h2 class="module-title">Графики</h2>
+            <p class="module-description">Визуализация данных в виде графиков и диаграмм. Анализ трендов и закономерностей.</p>
+            <div class="module-features">
+                <span class="feature-tag">Линейные</span>
+                <span class="feature-tag">Столбчатые</span>
+                <span class="feature-tag">Круговые</span>
+            </div>
+            <a href="{% url 'src:graphs' %}" class="module-button">
+                Перейти к графикам
+                <span class="button-arrow">→</span>
+            </a>
+        </div>
+
+        <!-- Модуль Таблицы -->
+        <div class="module-card">
+            <div class="module-icon">📋</div>
+            <h2 class="module-title">Таблицы</h2>
+            <p class="module-description">Работа с табличными данными, сортировка, фильтрация и экспорт в различные форматы.</p>
+            <div class="module-features">
+                <span class="feature-tag">Сортировка</span>
+                <span class="feature-tag">Фильтры</span>
+                <span class="feature-tag">Экспорт</span>
+            </div>
+            <a href="{% url 'src:tables' %}" class="module-button">
+                Перейти к таблицам
+                <span class="button-arrow">→</span>
+            </a>
+        </div>
+
+        <!-- Модуль Аналитика -->
+        <div class="module-card">
+            <div class="module-icon">📈</div>
+            <h2 class="module-title">Аналитика</h2>
+            <p class="module-description">Глубокий анализ данных, статистические показатели и прогнозирование.</p>
+            <div class="module-features">
+                <span class="feature-tag">Статистика</span>
+                <span class="feature-tag">Прогнозы</span>
+                <span class="feature-tag">Отчеты</span>
+            </div>
+            <a href="{% url 'src:analytics' %}" class="module-button">
+                Перейти к аналитике
+                <span class="button-arrow">→</span>
+            </a>
+        </div>
+
+        <!-- Модуль Связи -->
+        <div class="module-card">
+            <div class="module-icon">🕸️</div>
+            <h2 class="module-title">Связи</h2>
+            <p class="module-description">Анализ взаимосвязей между данными, графы и сетевые структуры.</p>
+            <div class="module-features">
+                <span class="feature-tag">Графы</span>
+                <span class="feature-tag">Сети</span>
+                <span class="feature-tag">Связи</span>
+            </div>
+            <a href="{% url 'src:nets' %}" class="module-button">
+                Перейти к связям
+                <span class="button-arrow">→</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Дополнительная информация -->
+    <div class="info-section">
+        <div class="info-card">
+            <h3 class="info-title">Быстрый доступ</h3>
+            <p class="info-text">Выберите нужный модуль для начала работы с данными. Каждый модуль предоставляет специализированные инструменты.</p>
+        </div>
+        <div class="info-card">
+            <h3 class="info-title">Последние обновления</h3>
+            <p class="info-text">Добавлена поддержка новых типов графиков и улучшена производительность таблиц.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
