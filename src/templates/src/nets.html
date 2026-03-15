@@ -1,11 +1,587 @@
+<!-- ==================== analysis.html ==================== -->
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}Анализ динамики показателей{% endblock %}
 
 {% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Анализ динамики показателей</h1>
+        <p class="page-subtitle">Основные выводы по работе установок 1 и 2 за январь–март 2023</p>
+    </div>
 
+    <!-- Блок с текстовыми выводами -->
+    <div class="conclusion-text">
+        <div class="info-card">
+            <h3 class="info-title">Аналитическое заключение</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8; color: #4a5a6e;">
+                <li><strong style="color:#0f2637;">Электроэнергия (Уст.1):</strong> Фактическое потребление в январе–феврале было близко к плану, однако в марте наблюдался значительный рост (до 15% выше плана). Наибольший перерасход зафиксирован 15.01, 28.01, 06.02.</li>
+                <li><strong style="color:#0f2637;">Пар (потребление, Уст.1):</strong> На протяжении всего периода фактические значения устойчиво ниже плана (экономия около 10–15%). Особенно заметно снижение в феврале.</li>
+                <li><strong style="color:#0f2637;">Сырьё (Уст.1):</strong> В январе наблюдалось небольшое превышение плана, с февраля факт практически соответствует плановым уровням, с отдельными пиками в сторону перерасхода.</li>
+                <li><strong style="color:#0f2637;">Выработка пара (Уст.2):</strong> В январе выработка была выше плана (до +8%), в феврале – незначительные колебания около плана, в марте – устойчивое превышение, особенно в конце месяца.</li>
+                <li><strong style="color:#0f2637;">Газ (Уст.2):</strong> В январе фактические значения ниже плана, в феврале–марте – переменная динамика с периодами как экономии, так и перерасхода, но в среднем близко к плану.</li>
+            </ul>
+        </div>
+    </div>
 
+    <!-- Два графика в одной строке: столбцы (факт) и линии (план) -->
+    <div class="charts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <div class="graph-card">
+            <h2 class="graph-title">Фактическое потребление по месяцам</h2>
+            <div style="height: 350px;">
+                <canvas id="factMonthlyChart"></canvas>
+            </div>
+            <p class="graph-note">Электроэнергия (кВт·ч), Пар (Гкал), Газ (тн)</p>
+        </div>
+        <div class="graph-card">
+            <h2 class="graph-title">Плановое потребление по месяцам</h2>
+            <div style="height: 350px;">
+                <canvas id="planMonthlyChart"></canvas>
+            </div>
+            <p class="graph-note">Электроэнергия (кВт·ч), Пар (Гкал), Газ (тн)</p>
+        </div>
+    </div>
 
+    <!-- График 2: Динамика выработки пара (Уст.2) с плановыми периодами -->
+    <div class="graph-card" style="margin-top: 2rem;">
+        <h2 class="graph-title">Ежедневная выработка пара (Уст.2) и плановые уровни</h2>
+        <div style="height: 400px;">
+            <canvas id="steamOutputChart"></canvas>
+        </div>
+        <p class="graph-note">Плановые значения менялись в начале каждого месяца (вертикальные линии – границы месяцев).</p>
+    </div>
 
+    <!-- График 3: Отклонения (факт-план) в процентах от плана -->
+    <div class="graph-card" style="margin-top: 2rem;">
+        <h2 class="graph-title">Среднемесячные отклонения от плана</h2>
+        <div style="height: 400px;">
+            <canvas id="deviationChart"></canvas>
+        </div>
+        <p class="graph-note">Положительные значения – перерасход, отрицательные – экономия (в % от плана).</p>
+    </div>
 
+    <!-- Итоговый вывод -->
+    <div class="data-info" style="margin-top: 2rem;">
+        <div class="info-card">
+            <h3 class="info-title">Общее заключение</h3>
+            <p class="info-text">
+                Анализ данных за первый квартал 2023 года показывает, что установка 1 имеет тенденцию к перерасходу электроэнергии при одновременной экономии пара, 
+                что может указывать на изменение режимов работы оборудования. Установка 2 демонстрирует стабильную выработку пара с превышением плана, 
+                при этом потребление газа остаётся в допустимых пределах. Рекомендуется детально проанализировать причины всплесков электропотребления 
+                в марте и повышенной выработки пара в конце месяца.
+            </p>
+        </div>
+    </div>
+</div>
 
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ==================== Подготовка данных ====================
+        // Даты и индексы месяцев
+        // Январь: дни 0-30, февраль: 31-58, март: 59-89
+        const monthNames = ['Январь', 'Февраль', 'Март'];
+
+        // --- Электроэнергия (Уст.1) ---
+        const factElectricity = [
+            20082, 18082, 20082, 19082, 20082, 20082, 20083, 19080, 19011, 20059,
+            20081, 20007, 19100, 19100, 24102, 22938, 19048, 17931, 19899, 19926.999,
+            19926.999, 19928.001, 19800, 20814, 19795, 19785, 20844, 24845.999, 20844, 20840,
+            18709, 20826, 20816, 20128, 19127, 20127.999, 24092.001, 17068, 20138.001, 18011,
+            17032, 18034, 18032, 18058, 17040, 18047, 17965, 17000, 16000, 17031,
+            17967, 17767, 15000, 15000, 16000, 16000, 17000, 15115, 15179, 17815,
+            18971.999, 19881.334, 18881.334, 19881.334, 18988, 19966.5, 20966.5, 21008, 20987.668, 19987.668,
+            20987.668, 20040.999, 14080, 20056, 19994.001, 19964.666, 22964.666, 17964.666, 18025, 20048,
+            21064, 18124, 18127.667, 20127.667, 20127.667, 19203, 20088, 19064, 17189, 17145.667
+        ];
+        const planElectricity = [
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386,
+            19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386,
+            19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.386, 19800.387,
+            19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387,
+            19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387,
+            19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387, 19800.387
+        ];
+
+        // --- Потребление пара (Уст.1) ---
+        const factSteam = [
+            17.639, 17.651, 17.689, 17.695, 17.710, 17.716, 17.759, 17.807, 17.823, 17.841,
+            17.886, 17.942, 17.983, 17.948, 17.894, 17.932, 17.940, 19.498, 22.331, 22.355,
+            22.382, 22.374, 22.342, 22.351, 22.341, 22.367, 22.380, 22.386, 22.377, 22.398,
+            22.439, 22.446, 22.484, 22.472, 22.476, 22.468, 22.459, 22.483, 22.467, 22.474,
+            22.421, 22.415, 22.402, 22.438, 22.432, 22.458, 21.209, 19.269, 19.314, 19.323,
+            19.301, 19.287, 19.315, 19.384, 19.417, 19.425, 19.420, 19.422, 19.397, 19.393,
+            19.409, 19.406, 19.434, 19.429, 19.444, 19.451, 19.348, 19.404, 19.431, 19.414,
+            19.432, 19.427, 19.410, 19.448, 19.468, 19.503, 19.474, 19.493, 19.519, 19.507,
+            19.484, 19.511, 19.506, 19.514, 19.523, 19.520, 19.507, 19.518, 19.586, 19.553
+        ];
+        const planSteam = [
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787,
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787,
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787,
+            23.787, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800,
+            19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800,
+            19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 19.800, 21.450,
+            21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450,
+            21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450,
+            21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450, 21.450
+        ];
+
+        // --- Газ (Уст.2) ---
+        const factGas = [
+            131.099, 132.392, 132.031, 133.081, 135.835, 138.213, 139.121, 138.301, 139.439, 139.674,
+            138.063, 137.810, 137.100, 136.577, 136.372, 136.815, 132.900, 136.533, 139.274, 139.214,
+            140.425, 140.786, 142.457, 142.023, 142.089, 141.952, 141.666, 140.358, 139.992, 139.043,
+            138.259, 138.828, 139.830, 140.112, 140.393, 140.638, 141.924, 142.763, 143.397, 141.851,
+            142.825, 141.951, 143.020, 142.934, 141.553, 142.417, 143.138, 141.762, 141.563, 141.674,
+            141.524, 141.896, 143.735, 145.325, 142.356, 141.135, 141.836, 143.596, 143.633, 143.189,
+            144.583, 143.525, 143.188, 143.170, 141.983, 140.950, 140.088, 140.091, 140.979, 140.625,
+            140.292, 141.132, 141.859, 141.406, 139.259, 139.597, 139.125, 138.861, 138.035, 138.559,
+            138.937, 139.713, 140.964, 141.729, 140.226, 140.586, 140.724, 141.164, 141.204, 141.336
+        ];
+        const planGas = [
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946,
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946,
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946,
+            137.946, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645,
+            135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645,
+            135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645,
+            135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645,
+            135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645,
+            135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645, 135.645
+        ];
+
+        // --- Выработка пара (Уст.2) ---
+        const factSteamOutput = [
+            157.672, 157.663, 157.201, 158.299, 155.910, 158.533, 158.529, 158.080, 162.181, 159.713,
+            156.935, 157.153, 155.953, 156.263, 156.352, 155.639, 156.774, 152.785, 150.225, 146.974,
+            150.744, 156.020, 155.271, 151.104, 147.865, 146.688, 149.082, 151.336, 149.282, 147.385,
+            145.509, 145.081, 143.494, 144.837, 147.507, 151.093, 152.971, 154.181, 153.950, 151.206,
+            148.103, 143.803, 145.575, 145.384, 141.801, 147.878, 150.748, 149.528, 147.746, 146.649,
+            150.022, 151.866, 152.487, 150.237, 146.674, 144.038, 142.035, 145.993, 145.861, 145.092,
+            145.232, 144.132, 144.054, 144.570, 138.989, 143.817, 143.322, 144.287, 147.413, 146.685,
+            142.308, 145.304, 143.374, 142.141, 143.716, 144.080, 144.234, 142.344, 143.139, 142.888,
+            144.891, 145.682, 147.681, 149.499, 146.549, 147.619, 147.402, 144.366, 146.000, 147.070
+        ];
+        const planSteamOutput = [
+            149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746,
+            149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746,
+            149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746, 149.746,
+            149.746, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197,
+            151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197,
+            151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 151.197, 146.157,
+            146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157,
+            146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157,
+            146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157, 146.157
+        ];
+
+        // Функция суммирования по месяцам
+        function sumMonth(data, start, end) {
+            let s = 0;
+            for (let i = start; i <= end; i++) s += data[i];
+            return s;
+        }
+
+        // Индексы месяцев (0-индекс)
+        const janStart = 0, janEnd = 30;
+        const febStart = 31, febEnd = 58;
+        const marStart = 59, marEnd = 89;
+
+        // Суммы по месяцам для электроэнергии
+        const elecFactMonth = [
+            sumMonth(factElectricity, janStart, janEnd),
+            sumMonth(factElectricity, febStart, febEnd),
+            sumMonth(factElectricity, marStart, marEnd)
+        ];
+        const elecPlanMonth = [
+            sumMonth(planElectricity, janStart, janEnd),
+            sumMonth(planElectricity, febStart, febEnd),
+            sumMonth(planElectricity, marStart, marEnd)
+        ];
+
+        // Суммы по месяцам для пара (потребление)
+        const steamFactMonth = [
+            sumMonth(factSteam, janStart, janEnd),
+            sumMonth(factSteam, febStart, febEnd),
+            sumMonth(factSteam, marStart, marEnd)
+        ];
+        const steamPlanMonth = [
+            sumMonth(planSteam, janStart, janEnd),
+            sumMonth(planSteam, febStart, febEnd),
+            sumMonth(planSteam, marStart, marEnd)
+        ];
+
+        // Суммы по месяцам для газа
+        const gasFactMonth = [
+            sumMonth(factGas, janStart, janEnd),
+            sumMonth(factGas, febStart, febEnd),
+            sumMonth(factGas, marStart, marEnd)
+        ];
+        const gasPlanMonth = [
+            sumMonth(planGas, janStart, janEnd),
+            sumMonth(planGas, febStart, febEnd),
+            sumMonth(planGas, marStart, marEnd)
+        ];
+
+        // ==================== График 1 (столбцы - факт) ====================
+        const ctxFact = document.getElementById('factMonthlyChart').getContext('2d');
+        new Chart(ctxFact, {
+            type: 'bar',
+            data: {
+                labels: monthNames,
+                datasets: [
+                    {
+                        label: 'Электроэнергия (факт), тыс. кВт·ч',
+                        data: elecFactMonth.map(v => v / 1000),
+                        backgroundColor: '#7fc1e5',
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Пар (факт), Гкал',
+                        data: steamFactMonth,
+                        backgroundColor: '#cbd5e1',
+                        yAxisID: 'y1',
+                    },
+                    {
+                        label: 'Газ (факт), тн',
+                        data: gasFactMonth,
+                        backgroundColor: '#fbbf24',
+                        yAxisID: 'y2',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#1e2b3c', font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f2637',
+                        bodyColor: '#4a5a6e',
+                        borderColor: '#e9ecef',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.dataset.label || '';
+                                let value = context.raw;
+                                if (context.dataset.yAxisID === 'y') value = (value * 1000).toFixed(0);
+                                else value = value.toFixed(1);
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#4a5a6e' } },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'тыс. кВт·ч', color: '#1e2b3c' },
+                        grid: { color: '#e9ecef' },
+                        ticks: { color: '#4a5a6e', callback: v => v + 'k' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Гкал', color: '#1e2b3c' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#4a5a6e', callback: v => v.toFixed(0) }
+                    },
+                    y2: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'тн', color: '#1e2b3c' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#4a5a6e', callback: v => v.toFixed(0) }
+                    }
+                }
+            }
+        });
+
+        // ==================== График 2 (линии - план) ====================
+        const ctxPlan = document.getElementById('planMonthlyChart').getContext('2d');
+        new Chart(ctxPlan, {
+            type: 'line',
+            data: {
+                labels: monthNames,
+                datasets: [
+                    {
+                        label: 'Электроэнергия (план), тыс. кВт·ч',
+                        data: elecPlanMonth.map(v => v / 1000),
+                        borderColor: '#7fc1e5',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.1,
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'Пар (план), Гкал',
+                        data: steamPlanMonth,
+                        borderColor: '#cbd5e1',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.1,
+                        yAxisID: 'y1',
+                    },
+                    {
+                        label: 'Газ (план), тн',
+                        data: gasPlanMonth,
+                        borderColor: '#fbbf24',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.1,
+                        yAxisID: 'y2',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#1e2b3c', font: { size: 11 } } },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f2637',
+                        bodyColor: '#4a5a6e',
+                        borderColor: '#e9ecef',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.dataset.label || '';
+                                let value = context.raw;
+                                if (context.dataset.yAxisID === 'y') value = (value * 1000).toFixed(0);
+                                else value = value.toFixed(1);
+                                return `${label}: ${value}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#4a5a6e' } },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: { display: true, text: 'тыс. кВт·ч', color: '#1e2b3c' },
+                        grid: { color: '#e9ecef' },
+                        ticks: { color: '#4a5a6e', callback: v => v + 'k' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'Гкал', color: '#1e2b3c' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#4a5a6e', callback: v => v.toFixed(0) }
+                    },
+                    y2: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: { display: true, text: 'тн', color: '#1e2b3c' },
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#4a5a6e', callback: v => v.toFixed(0) }
+                    }
+                }
+            }
+        });
+
+        // ==================== График 2 (старый steamOutputChart) ====================
+        const dates = Array.from({ length: 90 }, (_, i) => {
+            const d = new Date(2023, 0, i + 1);
+            return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+        });
+
+        const ctx2 = document.getElementById('steamOutputChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Факт выработка пара (Уст.2), Гкал',
+                        data: factSteamOutput,
+                        borderColor: '#7fc1e5',
+                        backgroundColor: 'rgba(127,193,229,0.1)',
+                        borderWidth: 2,
+                        pointRadius: 1,
+                        tension: 0.1,
+                        fill: false,
+                        yAxisID: 'y',
+                    },
+                    {
+                        label: 'План выработка пара (Уст.2), Гкал',
+                        data: planSteamOutput,
+                        borderColor: '#cbd5e1',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false,
+                        yAxisID: 'y',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#1e2b3c' } },
+                    tooltip: { backgroundColor: '#fff' }
+                },
+                scales: {
+                    x: { ticks: { maxTicksLimit: 15, color: '#4a5a6e' }, grid: { display: false } },
+                    y: { grid: { color: '#e9ecef' }, ticks: { color: '#4a5a6e', callback: v => v.toFixed(1) + ' Гкал' } }
+                }
+            }
+        });
+
+        // ==================== График 3: Среднемесячные отклонения в % ====================
+        function avgDevPct(factArr, planArr, start, end) {
+            let sumPct = 0;
+            for (let i = start; i <= end; i++) {
+                if (planArr[i] !== 0) {
+                    sumPct += (factArr[i] - planArr[i]) / planArr[i] * 100;
+                }
+            }
+            return sumPct / (end - start + 1);
+        }
+
+        const devElecPct = [
+            avgDevPct(factElectricity, planElectricity, janStart, janEnd),
+            avgDevPct(factElectricity, planElectricity, febStart, febEnd),
+            avgDevPct(factElectricity, planElectricity, marStart, marEnd)
+        ];
+        const devSteamPct = [
+            avgDevPct(factSteam, planSteam, janStart, janEnd),
+            avgDevPct(factSteam, planSteam, febStart, febEnd),
+            avgDevPct(factSteam, planSteam, marStart, marEnd)
+        ];
+        const devGasPct = [
+            avgDevPct(factGas, planGas, janStart, janEnd),
+            avgDevPct(factGas, planGas, febStart, febEnd),
+            avgDevPct(factGas, planGas, marStart, marEnd)
+        ];
+        const devSteamOutPct = [
+            avgDevPct(factSteamOutput, planSteamOutput, janStart, janEnd),
+            avgDevPct(factSteamOutput, planSteamOutput, febStart, febEnd),
+            avgDevPct(factSteamOutput, planSteamOutput, marStart, marEnd)
+        ];
+
+        const ctx3 = document.getElementById('deviationChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: monthNames,
+                datasets: [
+                    { label: 'Электроэнергия', data: devElecPct, backgroundColor: '#7fc1e5' },
+                    { label: 'Пар (потр.)', data: devSteamPct, backgroundColor: '#cbd5e1' },
+                    { label: 'Газ', data: devGasPct, backgroundColor: '#fbbf24' },
+                    { label: 'Пар (выр.)', data: devSteamOutPct, backgroundColor: '#94a3b8' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'top', 
+                        labels: { color: '#1e2b3c', font: { size: 11 } } 
+                    },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f2637',
+                        bodyColor: '#4a5a6e',
+                        borderColor: '#e9ecef',
+                        borderWidth: 1,
+                        padding: 8,
+                        callbacks: {
+                            title: (context) => context[0].label,
+                            label: (context) => {
+                                const label = context.dataset.label || '';
+                                const value = context.raw;
+                                return `${label}: ${value.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: '#4a5a6e' }
+                    },
+                    y: { 
+                        grid: { color: '#e9ecef' }, 
+                        ticks: { 
+                            color: '#4a5a6e', 
+                            callback: v => v + '%' 
+                        },
+                        title: { 
+                            display: true, 
+                            text: 'Отклонение от плана, %',
+                            color: '#1e2b3c'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    /* Дополнительные стили для страницы анализа */
+    .conclusion-text {
+        margin-top: 2rem;
+    }
+    .conclusion-text .info-card {
+        padding: 1.5rem;
+    }
+    .conclusion-text ul {
+        padding-left: 1.5rem;
+    }
+    .conclusion-text li {
+        margin-bottom: 0.5rem;
+    }
+    .graph-note {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        text-align: center;
+        margin-top: 0.5rem;
+    }
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+        .charts-row {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem;
+        }
+        .graph-card {
+            height: auto;
+            min-height: 300px;
+            margin-bottom: 1.5rem;
+        }
+        .graph-card canvas {
+            max-height: 300px;
+            width: 100% !important;
+            height: auto !important;
+        }
+        .data-info {
+            margin-top: 2rem;
+        }
+    }
+</style>
 {% endblock %}

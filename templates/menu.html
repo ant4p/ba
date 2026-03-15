@@ -3,13 +3,16 @@
     
     <nav class="nav-menu">
         <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Главная</a>
-        <a href="{% url 'src:graphs' %}" class="nav-item {% if request.resolver_match.url_name == 'graphs' %}active{% endif %}">Графики</a>
+        {% comment %} <a href="{% url 'src:graphs' %}" class="nav-item {% if request.resolver_match.url_name == 'graphs' %}active{% endif %}">Графики</a> {% endcomment %}
+        <a href="{% url 'src:graphs_ebl' %}" class="nav-item {% if request.resolver_match.url_name == 'graphs_ebl' %}active{% endif %}">Графики ЭБЛ</a>
+        <a href="{% url 'src:graphs_iee' %}" class="nav-item {% if request.resolver_match.url_name == 'graphs_iee' %}active{% endif %}">Графики ИЭЭ</a>
         <a href="{% url 'src:tables' %}" class="nav-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">Таблицы</a>
+        <a href="{% url 'src:tables_svod' %}" class="nav-item {% if request.resolver_match.url_name == 'tables_svod' %}active{% endif %}">Сводные данные</a>
         <a href="{% url 'src:analytics' %}" class="nav-item {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">Аналитика</a>
-        <a href="{% url 'src:nets' %}" class="nav-item {% if request.resolver_match.url_name == 'nets' %}active{% endif %}">Связи</a>
+        <a href="{% url 'src:nets' %}" class="nav-item {% if request.resolver_match.url_name == 'nets' %}active{% endif %}">Статистика</a>
         <div class="nav-divider"></div>
-        <a href="#" class="nav-item">Настройки</a>
-        <a href="#" class="nav-item">Профиль</a>
+        {% comment %} <a href="#" class="nav-item">Настройки</a>
+        <a href="#" class="nav-item">Профиль</a> {% endcomment %}
     </nav>
 
     <div class="nav-footer">

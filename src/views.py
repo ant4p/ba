@@ -20,6 +20,12 @@ class ShowNets(TemplateView):
 class ShowTables(TemplateView):
     template_name = "src/tables.html"
 
+class ShowTablesSvod(TemplateView):
+    template_name = "src/tables_svod.html"
 
-# class ShowIndex(TemplateView):
-#     template_name = "src/index.html"
+
+class ShowGraphsEnergyEbl(TemplateView):
+    template_name = "src/graphs_energy_ebl.html"
+
+class ShowGraphsEnergyIee(TemplateView):
+    template_name = "src/graphs_energy_iee.html"

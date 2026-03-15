@@ -1,11 +1,270 @@
+<!-- ==================== cost.html ==================== -->
 {% extends 'base.html' %}
-{% load static %}
+
+{% block title %}Стоимость ТЭР - Модуль бизнес-аналитики{% endblock %}
 
 {% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Стоимость топливно-энергетических ресурсов</h1>
+        <p class="page-subtitle">Цены за единицу ресурса и структура затрат</p>
+    </div>
 
+    <!-- Блок с таблицей и круговой диаграммой -->
+    <div class="cost-grid">
+        <!-- Таблица стоимостей -->
+        <div class="cost-table-card">
+            <h2 class="graph-title">Тарифы на ресурсы</h2>
+            <div class="table-responsive">
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>Ресурс</th>
+                            <th>Единица измерения</th>
+                            <th>Стоимость, руб.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Электроэнергия</td>
+                            <td>кВт·ч</td>
+                            <td>3,50</td>
+                        </tr>
+                        <tr>
+                            <td>Пар (потребление)</td>
+                            <td>Гкал</td>
+                            <td>1 417,00</td>
+                        </tr>
+                        <tr>
+                            <td>Газовое топливо</td>
+                            <td>тн</td>
+                            <td>8 804,00</td>
+                        </tr>
+                        <tr>
+                            <td>Жидкое топливо</td>
+                            <td>тн</td>
+                            <td>21 209,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="table-note">* Цены указаны за единицу ресурса</p>
+        </div>
 
+        <!-- Круговая диаграмма -->
+        <div class="graph-card pie-card">
+            <h2 class="graph-title">Структура стоимости ресурсов</h2>
+            <div class="pie-container">
+                <canvas id="costPieChart"></canvas>
+            </div>
+        </div>
+    </div>
 
+    <!-- Дополнительная информация -->
+    <div class="data-info" style="margin-top: 2rem;">
+        <div class="info-card">
+            <h3 class="info-title">📊 Анализ</h3>
+            <p class="info-text">
+                Наибольшую стоимость за единицу имеет жидкое топливо (21 209 руб./тн), 
+                наименьшую — электроэнергия (3,5 руб./кВт·ч). Однако для оценки фактических 
+                затрат необходимо учитывать объёмы потребления.
+            </p>
+        </div>
+        <div class="info-card">
+            <h3 class="info-title">📋 Примечание</h3>
+            <p class="info-text">
+                Круговая диаграмма отображает соотношение цен за единицу. 
+                При реальном расчёте затрат доли могут существенно отличаться 
+                в зависимости от объёмов потребления.
+            </p>
+        </div>
+    </div>
+</div>
 
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Данные для круговой диаграммы
+        const labels = ['Электроэнергия', 'Пар', 'Газ', 'Жидкое топливо'];
+        const prices = [3.5, 1417, 8804, 21209];
+        const colors = ['#7fc1e5', '#cbd5e1', '#fbbf24', '#94a3b8'];
 
+        const ctx = document.getElementById('costPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: prices,
+                    backgroundColor: colors,
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#1e2b3c', font: { size: 12 } }
+                    },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f2637',
+                        bodyColor: '#4a5a6e',
+                        borderColor: '#e9ecef',
+                        callbacks: {
+                            label: (context) => {
+                                const label = context.label || '';
+                                const value = context.raw.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                return `${label}: ${value} руб.`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    /* Дополнительные стили для страницы стоимости */
+    .cost-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .cost-table-card {
+        background-color: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .cost-table-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        border-color: #b9dcf2;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .cost-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Inter', sans-serif;
+        min-width: 100%; /* убираем фиксированную минимальную ширину */
+    }
+
+    .cost-table th {
+        text-align: left;
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
+        font-weight: 500;
+        color: #0f2637;
+        border-bottom: 2px solid #e0f2fe;
+    }
+
+    .cost-table td {
+        padding: 0.75rem 0.5rem;
+        color: #4a5a6e;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .cost-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .cost-table td:last-child {
+        font-weight: 500;
+        color: #0f2637;
+        white-space: nowrap;
+    }
+
+    .table-note {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+        font-style: italic;
+    }
+
+    /* Круговая диаграмма */
+    .pie-card {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pie-container {
+        flex: 1;
+        width: 100%;
+        min-height: 300px;
+        position: relative;
+    }
+
+    .pie-container canvas {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .cost-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .cost-table-card,
+        .graph-card {
+            padding: 1.5rem;
+        }
+
+        .cost-table th,
+        .cost-table td {
+            padding: 0.6rem 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .graph-title {
+            font-size: 1.4rem;
+        }
+
+        .pie-container {
+            min-height: 250px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cost-table th,
+        .cost-table td {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.3rem;
+        }
+
+        .cost-table td:last-child {
+            white-space: normal; /* разрешаем перенос, если очень тесно */
+        }
+
+        .pie-container {
+            min-height: 200px;
+        }
+    }
+</style>
 {% endblock %}

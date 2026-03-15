@@ -462,3 +462,192 @@ body {
         display: none;
     }
 }
+
+
+
+
+
+
+
+/* ===== СТИЛИ ДЛЯ СТРАНИЦЫ ГРАФИКОВ ===== */
+.graph-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.graph-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease;
+    height: 500px; /* Фиксированная высота для графика */
+    position: relative;
+}
+
+.graph-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    border-color: #b9dcf2;
+}
+
+.graph-card canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.data-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .graph-card {
+        height: 350px;
+        padding: 1rem;
+    }
+    
+    .data-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .graph-card {
+        height: 300px;
+        padding: 0.75rem;
+    }
+}
+
+/* Сетка для графиков */
+.graphs-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.graph-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    height: 500px;
+    position: relative;
+}
+
+.graph-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    border-color: #b9dcf2;
+}
+
+.graph-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #0f2637;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0f2fe;
+}
+
+.graph-card canvas {
+    width: 100% !important;
+    height: calc(100% - 60px) !important;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .graph-card {
+        height: 400px;
+        padding: 1rem;
+    }
+    .graph-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .graph-card {
+        height: 350px;
+        padding: 0.75rem;
+    }
+}
+
+/* Детальный блок */
+.detail-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #0f2637;
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.mini-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.mini-card:hover {
+    border-color: #b9dcf2;
+}
+
+.mini-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #0f2637;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e0f2fe;
+}
+
+.mini-card canvas {
+    flex: 1;
+    width: 100% !important;
+    min-height: 0;
+}
+
+@media (max-width: 768px) {
+    .mini-grid {
+        grid-template-columns: 1fr;
+    }
+    .mini-card {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mini-card {
+        height: 220px;
+        padding: 1rem;
+    }
+}

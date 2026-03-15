@@ -1,0 +1,219 @@
+<!-- ==================== graphs.html ==================== -->
+{% extends 'base.html' %}
+
+{% block title %}Графики - Модуль бизнес-аналитики{% endblock %}
+
+{% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Анализ энергопотребления по установкам</h1>
+        <p class="page-subtitle">Удельный расход электроэнергии (кВт·ч/т) в зависимости от производительности</p>
+    </div>
+
+    <!-- Сетка графиков -->
+    <div class="graphs-grid">
+        <!-- Установка 1 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 1</h2>
+            <canvas id="chartUnit1" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 2 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 2</h2>
+            <canvas id="chartUnit2" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 3 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 3</h2>
+            <canvas id="chartUnit3" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 4 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 4</h2>
+            <canvas id="chartUnit4" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 5 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 5</h2>
+            <canvas id="chartUnit5" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 6 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 6</h2>
+            <canvas id="chartUnit6" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 7 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 7</h2>
+            <canvas id="chartUnit7" width="800" height="400"></canvas>
+        </div>
+
+        <!-- Установка 8 -->
+        <div class="graph-card">
+            <h2 class="graph-title">Установка 8</h2>
+            <canvas id="chartUnit8" width="800" height="400"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Данные для установки 1 (уже были)
+        const unit1_prod = [624.0, 632.8, 641.6, 650.4, 659.2, 667.9, 676.7, 685.5];
+        const unit1_winter = [1.154, 1.155, 1.157, 1.158, 1.160, 1.161, 1.162, 1.164];
+        const unit1_summer = [1.464, 1.413, 1.362, 1.313, 1.266, 1.219, 1.174, 1.130];
+
+        createChart('chartUnit1', unit1_prod, unit1_winter, unit1_summer, 'Установка 1');
+
+        // Установка 2
+        const unit2_prod = [508.6, 509.9, 511.1, 512.3, 513.6, 514.8, 516.1, 517.3, 518.6, 519.8, 521.1, 522.3, 523.6, 524.8, 526.1];
+        const unit2_winter = [8.542, 8.551, 8.561, 8.570, 8.579, 8.589, 8.598, 8.607, 8.616, 8.626, 8.635, null, null, null, null];
+        const unit2_summer = [null, null, null, null, null, 9.024, 8.988, 8.952, 8.917, 8.881, 8.846, 8.811, 8.776, 8.741, 8.707];
+
+        createChart('chartUnit2', unit2_prod, unit2_winter, unit2_summer, 'Установка 2');
+
+        // Установка 3
+        const unit3_prod = [563.8, 573.2, 582.6, 592.0, 601.4, 610.8, 620.2, 629.5, 638.9, 648.3, 657.7, 667.1, 676.5, 685.9, 695.3];
+        const unit3_winter = [null, null, null, null, null, null, null, 8.744, 8.669, 8.596, 8.525, 8.456, 8.388, 8.323, null];
+        const unit3_summer = [9.971, 9.825, 9.683, 9.546, 9.413, 9.285, 9.160, 9.038, 8.921, 8.807, 8.696, 8.588, 8.483, 8.381, 8.282];
+
+        createChart('chartUnit3', unit3_prod, unit3_winter, unit3_summer, 'Установка 3');
+
+        // Установка 4
+        const unit4_prod = [145.1, 249.7, 354.4, 459.0, 563.7, 668.3, 772.9, 877.6, 982.2, 1086.8, 1191.5, 1296.1, 1400.8, 1505.4, 1610.0];
+        const unit4_winter = [null, 8.302, null, null, null, null, null, null, null, null, null, null, null, null, null];
+        const unit4_summer = [7.930, 6.770, 6.296, 6.037, 5.875, 5.763, 5.682, 5.620, 5.571, 5.532, 5.500, 5.472, 5.449, 5.429, 5.412];
+
+        createChart('chartUnit4', unit4_prod, unit4_winter, unit4_summer, 'Установка 4');
+
+        // Установка 5
+        const unit5_prod = [400.3, 424.8, 449.4, 473.9, 498.5, 523.0, 547.6, 572.1, 596.7, 621.2, 645.8, 670.3, 694.9, 719.4, 744.0];
+        const unit5_winter = [null, null, null, null, null, null, null, null, null, 7.843, null, null, null, null, null];
+        const unit5_summer = [13.901, 12.738, 11.702, 10.774, 9.936, 9.178, 8.487, 7.856, 7.277, 6.743, 6.250, 5.793, 5.369, 4.973, 4.604];
+
+        createChart('chartUnit5', unit5_prod, unit5_winter, unit5_summer, 'Установка 5');
+
+        // Установка 6
+        const unit6_prod = [490.4, 503.3, 516.3, 529.2, 542.1, 555.0, 567.9, 580.9, 593.8, 606.7, 619.6, 632.6, 645.5, 658.4, 671.3];
+        const unit6_winter = [6.122, 6.108, 6.094, 6.081, 6.069, 6.057, 6.046, 6.035, 6.024, null, null, null, null, null, null];
+        const unit6_summer = [null, null, 8.689, 8.272, 7.875, 7.496, 7.135, 6.790, 6.459, 6.143, 5.840, 5.550, 5.271, 5.003, 4.745];
+
+        createChart('chartUnit6', unit6_prod, unit6_winter, unit6_summer, 'Установка 6');
+
+        // Установка 7
+        const unit7_prod = [117.6, 136.6, 155.6, 174.6, 193.6, 212.6, 231.6, 250.6, 269.5, 288.5, 307.5, 326.5, 345.5, 364.5, 383.5];
+        const unit7_winter = [null, null, 4.814, 4.376, 4.024, 3.735, 3.493, 3.288, 3.112, 2.959, 2.825, 2.707, 2.601, 2.507, 2.422];
+        const unit7_summer = [11.041, 8.809, 7.123, 5.803, 4.742, null, null, null, null, null, null, null, null, null, null];
+
+        createChart('chartUnit7', unit7_prod, unit7_winter, unit7_summer, 'Установка 7');
+
+        // Установка 8
+        const unit8_prod = [672.0, 677.1, 682.3, 687.4, 692.6, 697.7, 702.9, 708.0, 713.1, 718.3, 723.4, 728.6, 733.7, 738.9, 744.0];
+        const unit8_winter = [1.585, 1.559, 1.534, 1.510, 1.485, 1.461, 1.438, 1.414, 1.392, 1.369, 1.347, 1.325, 1.303, 1.282, 1.261];
+        const unit8_summer = [null, null, null, null, null, null, null, null, null, null, 1.414, 1.383, 1.353, 1.323, 1.293];
+
+        createChart('chartUnit8', unit8_prod, unit8_winter, unit8_summer, 'Установка 8');
+
+        // Общая функция создания графика
+        function createChart(canvasId, prod, winter, summer, unitLabel) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: prod.map(p => p.toFixed(1) + ' т/ч'),
+                    datasets: [
+                        {
+                            label: 'Зимний сезон (кВт·ч/т)',
+                            data: winter,
+                            borderColor: '#7fc1e5',
+                            backgroundColor: 'rgba(127, 193, 229, 0.1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#7fc1e5',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            tension: 0.2,
+                            spanGaps: false
+                        },
+                        {
+                            label: 'Летний сезон (кВт·ч/т)',
+                            data: summer,
+                            borderColor: '#cbd5e1',
+                            backgroundColor: 'rgba(203, 213, 225, 0.1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#cbd5e1',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            tension: 0.2,
+                            spanGaps: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#1e2b3c',
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#0f2637',
+                            bodyColor: '#4a5a6e',
+                            borderColor: '#e9ecef',
+                            borderWidth: 1,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#e9ecef' },
+                            ticks: {
+                                color: '#4a5a6e',
+                                font: { family: 'Inter, sans-serif' },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            grid: { color: '#e9ecef' },
+                            ticks: {
+                                color: '#4a5a6e',
+                                font: { family: 'Inter, sans-serif' },
+                                callback: (value) => value.toFixed(2) + ' кВт·ч/т'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Удельный расход электроэнергии',
+                                color: '#1e2b3c',
+                                font: { family: 'Inter, sans-serif', size: 12, weight: '500' }
+                            }
+                        }
+                    },
+                    layout: { padding: { top: 20, bottom: 20 } }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
