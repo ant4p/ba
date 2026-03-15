@@ -11,10 +11,10 @@ services:
   ba:
     build:
       context: .
-    container_name: reafuture
-    image: reafuture
+    container_name: ba
+    image: ba
     restart: always
-    entrypoint: /reafuture/start.sh
+    entrypoint: /ba/start.sh
     depends_on:
       - db
     volumes:
