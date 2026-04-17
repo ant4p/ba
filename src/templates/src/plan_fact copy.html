@@ -1,0 +1,118 @@
+<!-- ==================== plan_fact.html ==================== -->
+{% extends 'base.html' %}
+
+{% block title %}План/факт - Модуль бизнес-аналитики{% endblock %}
+
+{% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Сводные данные</h1>
+        <p class="page-subtitle">План/факт количества сырья, количества и стоимости электроэнергии</p>
+    </div>
+
+    <!-- График: сырьё факт vs план -->
+    <div class="graph-card" style="height: auto; min-height: 300px;">
+        <h2 class="graph-title" style="font-size: 1.2rem;">Сырье, тн</h2>
+        <canvas id="rawMaterialChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+        <p class="graph-note">Сравнение фактического и планового потребления сырья по дням (1–90).</p>
+    </div>
+</div>
+
+<!-- Подключение Chart.js (если ещё не подключён в base.html) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Данные (90 точек) для сырья
+        const rawFact = [
+            16230.409, 16230.409, 15912.778, 15912.778, 15912.778, 15827.454, 15827.454, 15827.454, 15840.261, 15465.337,
+            16139.101, 16575.545, 16630.904, 16630.904, 16630.904, 16460.059, 16466.179, 16458.929, 16589.275, 16557.620,
+            16557.620, 16557.620, 16663.534, 16626.466, 16850.523, 16811.426, 16689.644, 16689.644, 16689.644, 16598.388
+        ];
+
+        const rawPlan = [
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226
+        ];
+
+        // Метки оси X: от 1 до 90
+        const labels = Array.from({ length: rawFact.length }, (_, i) => (i + 1).toString());
+
+        const canvas = document.getElementById('rawMaterialChart');
+        if (!canvas) {
+            console.error('Canvas element not found');
+            return;
+        }
+        const ctx = canvas.getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Факт (тн)',
+                        data: rawFact,
+                        backgroundColor: 'rgba(255, 140, 66, 0.7)',
+                        borderColor: '#cc6b2c',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        barPercentage: 0.8,
+                        categoryPercentage: 0.9,
+                        order: 2
+                    },
+                    {
+                        label: 'План (тн)',
+                        data: rawPlan,
+                        backgroundColor: 'rgba(76, 159, 112, 0.5)',
+                        borderColor: '#2e6b46',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        barPercentage: 0.8,
+                        categoryPercentage: 0.9,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { color: '#1e2b3c', font: { size: 12 } }
+                    },
+                    tooltip: {
+                        backgroundColor: '#ffffff',
+                        titleColor: '#0f2637',
+                        bodyColor: '#4a5a6e',
+                        borderColor: '#e9ecef',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: (context) => {
+                                const label = context.dataset.label || '';
+                                const value = context.raw.toFixed(3);
+                                return `${label}: ${value} тн`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Номер наблюдения', color: '#1e2b3c', font: { size: 11 } },
+                        ticks: { maxTicksLimit: 15, color: '#4a5a6e' },
+                        grid: { display: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'тонны', color: '#1e2b3c', font: { size: 11 } },
+                        ticks: { color: '#4a5a6e', callback: v => v.toLocaleString() },
+                        grid: { color: '#e9ecef' }
+                    }
+                },
+                layout: { padding: { top: 10, bottom: 10, left: 5, right: 5 } }
+            }
+        });
+    });
+</script>
+{% endblock %}

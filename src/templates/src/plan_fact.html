@@ -1,0 +1,149 @@
+<!-- ==================== plan_fact.html ==================== -->
+{% extends 'base.html' %}
+
+{% block title %}План/факт - Модуль бизнес-аналитики{% endblock %}
+
+{% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Сводные данные</h1>
+        <p class="page-subtitle">План/факт количества сырья, электроэнергии и её стоимости</p>
+    </div>
+
+    <!-- График 1: Сырьё -->
+    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Сырье, тн</h2>
+    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
+        <canvas id="rawMaterialChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    </div>
+    <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления сырья по дням (1–30). Единицы: тонны</p>
+
+    <!-- График 2: Электроэнергия -->
+    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Электроэнергия, кВт·ч</h2>
+    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
+        <canvas id="electricityChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    </div>
+    <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления электроэнергии по дням (1–30). Единицы: кВт·ч</p>
+
+    <!-- График 3: Стоимость электроэнергии -->
+    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Стоимость электроэнергии, руб.</h2>
+    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
+        <canvas id="costChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    </div>
+    <p class="graph-note" style="margin-top: 0.5rem;">Стоимость = потребление (кВт·ч) × 3,5 руб. по дням (1–30).</p>
+</div>
+
+<!-- Подключение Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== Общие данные (30 дней) ==========
+        // Сырьё
+        const rawFact = [
+            16230.409, 16230.409, 15912.778, 15912.778, 15912.778, 15827.454, 15827.454, 15827.454, 15840.261, 15465.337,
+            16139.101, 16575.545, 16630.904, 16630.904, 16630.904, 16460.059, 16466.179, 16458.929, 16589.275, 16557.620,
+            16557.620, 16557.620, 16663.534, 16626.466, 16850.523, 16811.426, 16689.644, 16689.644, 16689.644, 16598.388
+        ];
+        const rawPlan = [
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
+            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226
+        ];
+        // Электроэнергия
+        const elecFact = [
+            20082.000, 18082.000, 20082.000, 19082.000, 20082.000, 20082.000, 20083.000, 19080.000, 19011.000, 20059.000,
+            20081.000, 20007.000, 19100.000, 19100.000, 24102.000, 22938.000, 19048.000, 17931.000, 19899.000, 19926.999,
+            19926.999, 19928.001, 19800.000, 20814.000, 19795.000, 19785.000, 20844.000, 24845.999, 20844.000, 20840.000
+        ];
+        const elecPlan = [
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275
+        ];
+
+        // Стоимость = электроэнергия * 3.5
+        const costFact = elecFact.map(v => v * 3.5);
+        const costPlan = elecPlan.map(v => v * 3.5);
+
+        // Метки оси X (1..30)
+        const labels = Array.from({ length: rawFact.length }, (_, i) => (i + 1).toString());
+
+        // ========== Общие настройки ==========
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            animation: false,               // отключаем анимацию, убираем "тряску"
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#1e2b3c', font: { size: 12 } } },
+                tooltip: { backgroundColor: '#ffffff', titleColor: '#0f2637', bodyColor: '#4a5a6e', borderColor: '#e9ecef', borderWidth: 1 }
+            },
+            scales: {
+                x: { ticks: { maxTicksLimit: 15, color: '#4a5a6e' }, grid: { display: false }, title: { display: false } },
+                y: { ticks: { color: '#4a5a6e', callback: v => v.toLocaleString() }, grid: { color: '#e9ecef' }, title: { display: false } }
+            }
+        };
+
+        // Цвета:
+        const planBlue = 'rgba(41, 128, 185, 0.8)';           // яркий синий (план везде)
+        const planBlueBorder = 'rgba(41, 128, 185, 1)';
+        const orangeFact = 'rgba(255, 140, 66, 0.7)';        // оранжевый (сырьё)
+        const orangeFactBorder = 'rgba(200, 100, 30, 1)';
+        const yellowFact = 'rgba(241, 196, 15, 0.8)';        // жёлтый (электроэнергия)
+        const yellowFactBorder = 'rgba(243, 156, 18, 1)';
+        const greenFact = 'rgba(46, 204, 113, 0.8)';         // ярко-зелёный (стоимость)
+        const greenFactBorder = 'rgba(39, 174, 96, 1)';
+
+        // ========== График 1: Сырьё (факт – оранжевый) ==========
+        const rawCtx = document.getElementById('rawMaterialChart').getContext('2d');
+        new Chart(rawCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Факт', data: rawFact, backgroundColor: orangeFact, borderColor: orangeFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
+                    { label: 'План', data: rawPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} тн` } } }
+            }
+        });
+
+        // ========== График 2: Электроэнергия (факт – жёлтый) ==========
+        const elecCtx = document.getElementById('electricityChart').getContext('2d');
+        new Chart(elecCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Факт', data: elecFact, backgroundColor: yellowFact, borderColor: yellowFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
+                    { label: 'План', data: elecPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} кВт·ч` } } }
+            }
+        });
+
+        // ========== График 3: Стоимость (факт – ярко-зелёный) ==========
+        const costCtx = document.getElementById('costChart').getContext('2d');
+        new Chart(costCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Факт', data: costFact, backgroundColor: greenFact, borderColor: greenFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
+                    { label: 'План', data: costPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } }
+            }
+        });
+    });
+</script>
+{% endblock %}

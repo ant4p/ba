@@ -29,3 +29,6 @@ class ShowGraphsEnergyEbl(TemplateView):
 
 class ShowGraphsEnergyIee(TemplateView):
     template_name = "src/graphs_energy_iee.html"
+
+class ShowPlanFact(TemplateView):
+    template_name = "src/plan_fact.html"

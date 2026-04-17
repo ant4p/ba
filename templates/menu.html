@@ -10,6 +10,7 @@
         <a href="{% url 'src:tables_svod' %}" class="nav-item {% if request.resolver_match.url_name == 'tables_svod' %}active{% endif %}">Сводные данные</a>
         <a href="{% url 'src:analytics' %}" class="nav-item {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">Аналитика</a>
         <a href="{% url 'src:nets' %}" class="nav-item {% if request.resolver_match.url_name == 'nets' %}active{% endif %}">Статистика</a>
+        <a href="{% url 'src:plan_fact' %}" class="nav-item {% if request.resolver_match.url_name == 'plan_fact' %}active{% endif %}">План/Факт</a>
         <div class="nav-divider"></div>
         {% comment %} <a href="#" class="nav-item">Настройки</a>
         <a href="#" class="nav-item">Профиль</a> {% endcomment %}
