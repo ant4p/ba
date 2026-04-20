@@ -205,7 +205,6 @@
         }
         
         const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
-        // График потребления ресурса
         if (charts.resource) charts.resource.destroy();
         charts.resource = new Chart(document.getElementById('resourceChart'), {
             type: 'bar',
@@ -218,7 +217,6 @@
         document.getElementById('resourceChartTitle').innerText = titleText;
         document.getElementById('resourceNote').innerHTML = `Сравнение фактического и планового потребления ${resource === 'electricity' ? 'электроэнергии' : (resource === 'steam' ? 'теплоэнергии' : 'газа')}.`;
 
-        // График стоимости ресурса
         const costFact = fact.map(v => v * tariff);
         const costPlan = plan.map(v => v * tariff);
         if (charts.costResource) charts.costResource.destroy();
@@ -282,17 +280,26 @@
             <tr><td><strong>Сырьё</strong></td><td>${totalRawPlan.toFixed(1)} тн</td><td>${totalRawFact.toFixed(1)} тн</td><td style="color: ${rawDev>=0?'#ef4444':'#10b981'}">${rawDev>0?'+':''}${rawDev.toFixed(1)} тн</td><td style="color: ${rawDev>=0?'#ef4444':'#10b981'}">${(rawDev/totalRawPlan*100).toFixed(1)}%</td></tr>
         `;
 
-        // Бублики
+        // Бублики (легенда внизу)
         const planData = [costElecSumPlan, costSteamSumPlan, costFuelSumPlan];
         const factData = [costElecSumFact, costSteamSumFact, costFuelSumFact];
         if (charts.planDoughnut) charts.planDoughnut.destroy();
         if (charts.factDoughnut) charts.factDoughnut.destroy();
-        charts.planDoughnut = new Chart(document.getElementById('planDoughnutChart'), { type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: planData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '30%' } });
-        charts.factDoughnut = new Chart(document.getElementById('factDoughnutChart'), { type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: factData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '30%' } });
+        charts.planDoughnut = new Chart(document.getElementById('planDoughnutChart'), {
+            type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: planData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '30%' }
+        });
+        charts.factDoughnut = new Chart(document.getElementById('factDoughnutChart'), {
+            type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: factData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '30%' }
+        });
 
-        // Детальная таблица (показывает сырьё, электроэнергию и её стоимость – не зависит от выбора ресурса)
+        // Детальная таблица с накопительным итогом
         const tbodyDaily = document.querySelector('#dailyTable tbody');
         tbodyDaily.innerHTML = '';
+        let sumRawFact = 0, sumRawPlan = 0, sumRawDev = 0;
+        let sumElecFact = 0, sumElecPlan = 0, sumElecDev = 0;
+        let sumCostFact = 0, sumCostPlan = 0, sumCostDev = 0;
         for (let i=0; i<30; i++) {
             const rawDevDay = rawFact[i]-rawPlan[i];
             const elecDev = elecFact[i]-elecPlan[i];
@@ -304,9 +311,26 @@
                 <td>${(elecFact[i]*tariffs.electricity).toFixed(2)}</td><td>${(elecPlan[i]*tariffs.electricity).toFixed(2)}</td><td style="color: ${costDev>=0?'#ef4444':'#10b981'}">${costDev>0?'+':''}${costDev.toFixed(2)}</td>
             </tr>
             `);
+            sumRawFact += rawFact[i];
+            sumRawPlan += rawPlan[i];
+            sumRawDev += rawDevDay;
+            sumElecFact += elecFact[i];
+            sumElecPlan += elecPlan[i];
+            sumElecDev += elecDev;
+            sumCostFact += elecFact[i]*tariffs.electricity;
+            sumCostPlan += elecPlan[i]*tariffs.electricity;
+            sumCostDev += costDev;
         }
+        const totalRow = `
+            <tr style="background-color: #f0f9ff; font-weight: 600;">
+                <td><strong>Итого</strong></td>
+                <td><strong>${sumRawFact.toFixed(3)}</strong></td><td><strong>${sumRawPlan.toFixed(3)}</strong></td><td style="color: ${sumRawDev>=0?'#ef4444':'#10b981'}"><strong>${sumRawDev>0?'+':''}${sumRawDev.toFixed(3)}</strong></td>
+                <td><strong>${sumElecFact.toFixed(3)}</strong></td><td><strong>${sumElecPlan.toFixed(3)}</strong></td><td style="color: ${sumElecDev>=0?'#ef4444':'#10b981'}"><strong>${sumElecDev>0?'+':''}${sumElecDev.toFixed(3)}</strong></td>
+                <td><strong>${sumCostFact.toFixed(2)}</strong></td><td><strong>${sumCostPlan.toFixed(2)}</strong></td><td style="color: ${sumCostDev>=0?'#ef4444':'#10b981'}"><strong>${sumCostDev>0?'+':''}${sumCostDev.toFixed(2)}</strong></td>
+            </tr>
+        `;
+        tbodyDaily.insertAdjacentHTML('beforeend', totalRow);
 
-        // Обновить графики ресурса и его стоимости (зависят от выбора ресурса)
         updateResourceCharts();
     }
 
