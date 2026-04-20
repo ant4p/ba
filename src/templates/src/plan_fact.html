@@ -11,139 +11,355 @@
         <p class="page-subtitle">План/факт количества сырья, электроэнергии и её стоимости</p>
     </div>
 
-    <!-- График 1: Сырьё -->
-    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Сырье, тн</h2>
-    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
-        <canvas id="rawMaterialChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    <!-- Панель фильтров (установка, месяц, ресурс) -->
+    <div class="filters-panel" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+        <div class="filter-group">
+            <label>Установка:</label>
+            <select id="unitSelect" class="filter-select">
+                <option value="unit1">Установка 1</option>
+                <option value="unit2">Установка 2</option>
+                <option value="unit3">Установка 3</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Месяц:</label>
+            <select id="monthSelect" class="filter-select">
+                <option value="jan">Январь</option>
+                <option value="feb">Февраль</option>
+                <option value="mar">Март</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Ресурс:</label>
+            <select id="resourceSelect" class="filter-select">
+                <option value="electricity">Электроэнергия</option>
+                <option value="steam">Теплоэнергия (пар)</option>
+                <option value="fuel">Топливо (газ)</option>
+            </select>
+        </div>
     </div>
-    <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления сырья по дням (1–30). Единицы: тонны</p>
 
-    <!-- График 2: Электроэнергия -->
-    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Электроэнергия, кВт·ч</h2>
-    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
-        <canvas id="electricityChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    <!-- Блок экспорта -->
+    <div class="export-block" style="display: flex; justify-content: flex-end; gap: 1rem; margin-bottom: 1rem;">
+        <button class="export-btn" id="exportExcelBtn">📊 Excel</button>
+        <button class="export-btn" id="exportPdfBtn">📄 PDF</button>
     </div>
-    <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления электроэнергии по дням (1–30). Единицы: кВт·ч</p>
 
-    <!-- График 3: Стоимость электроэнергии -->
-    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Стоимость электроэнергии, руб.</h2>
-    <div class="graph-card" style="height: auto; min-height: 260px; padding: 0.5rem;">
-        <canvas id="costChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
+    <!-- Общая таблица (агрегированные данные по ТЭР, без сырья) -->
+    <div class="table-wrapper" style="margin-bottom: 1rem;">
+        <table class="data-table summary-info-table" id="summaryInfoTable">
+            <thead><tr><th>Наименование</th><th>План</th><th>Факт</th><th>Отклонение</th><th>% отклонения</th></tr></thead>
+            <tbody id="summaryInfoBody"></tbody>
+        </table>
     </div>
-    <p class="graph-note" style="margin-top: 0.5rem;">Стоимость = потребление (кВт·ч) × 3,5 руб. по дням (1–30).</p>
+
+    <!-- Отдельная таблица для сырья -->
+    <div class="table-wrapper" style="margin-bottom: 2rem;">
+        <table class="data-table summary-info-table" id="rawSummaryTable">
+            <thead><tr><th>Наименование</th><th>План</th><th>Факт</th><th>Отклонение</th><th>% отклонения</th></tr></thead>
+            <tbody id="rawSummaryBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Бублики (структура стоимости ТЭР) -->
+    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Структура стоимости ТЭР</h2>
+    <div class="doughnuts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div class="graph-card" style="height: 320px;"><canvas id="planDoughnutChart"></canvas></div>
+        <div class="graph-card" style="height: 320px;"><canvas id="factDoughnutChart"></canvas></div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="tabs-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="graphs">Графики</button>
+            <button class="tab-btn" data-tab="tables">Сводная таблица</button>
+        </div>
+
+        <div id="graphs-tab" class="tab-content active">
+            <!-- График 1: Сырьё (не зависит от выбора ресурса) -->
+            <h2 class="graph-title">Сырье, тн</h2>
+            <div class="graph-card" style="height: 280px;"><canvas id="rawMaterialChart"></canvas></div>
+            <p class="graph-note">Сравнение фактического и планового потребления сырья по дням (1–30).</p>
+
+            <!-- График 2: выбранный ресурс (электроэнергия/пар/газ) -->
+            <h2 class="graph-title" id="resourceChartTitle">Электроэнергия, кВт·ч</h2>
+            <div class="graph-card" style="height: 280px;"><canvas id="resourceChart"></canvas></div>
+            <p class="graph-note" id="resourceNote">Сравнение фактического и планового потребления выбранного ресурса.</p>
+
+            <!-- График 3: стоимость выбранного ресурса -->
+            <h2 class="graph-title" id="costChartTitle">Стоимость электроэнергии, руб.</h2>
+            <div class="graph-card" style="height: 280px;"><canvas id="costResourceChart"></canvas></div>
+            <p class="graph-note" id="costNote">Стоимость рассчитана по тарифу.</p>
+        </div>
+
+        <div id="tables-tab" class="tab-content">
+            <div class="table-wrapper"><table class="data-table" id="dailyTable"><thead><tr><th rowspan="2">День</th><th colspan="3">Сырье (тн)</th><th colspan="3">Электроэнергия (кВт·ч)</th><th colspan="3">Стоимость (руб.)</th></tr><td><th>Факт</th><th>План</th><th>Откл.</th><th>Факт</th><th>План</th><th>Откл.</th><th>Факт</th><th>План</th><th>Откл.</th></tr></thead><tbody></tbody></table></div>
+        </div>
+    </div>
 </div>
 
-<!-- Подключение Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ========== Общие данные (30 дней) ==========
-        // Сырьё
-        const rawFact = [
-            16230.409, 16230.409, 15912.778, 15912.778, 15912.778, 15827.454, 15827.454, 15827.454, 15840.261, 15465.337,
-            16139.101, 16575.545, 16630.904, 16630.904, 16630.904, 16460.059, 16466.179, 16458.929, 16589.275, 16557.620,
-            16557.620, 16557.620, 16663.534, 16626.466, 16850.523, 16811.426, 16689.644, 16689.644, 16689.644, 16598.388
-        ];
-        const rawPlan = [
-            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
-            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
-            15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226
-        ];
-        // Электроэнергия
-        const elecFact = [
-            20082.000, 18082.000, 20082.000, 19082.000, 20082.000, 20082.000, 20083.000, 19080.000, 19011.000, 20059.000,
-            20081.000, 20007.000, 19100.000, 19100.000, 24102.000, 22938.000, 19048.000, 17931.000, 19899.000, 19926.999,
-            19926.999, 19928.001, 19800.000, 20814.000, 19795.000, 19785.000, 20844.000, 24845.999, 20844.000, 20840.000
-        ];
-        const elecPlan = [
-            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
-            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
-            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275
-        ];
+    // ======================= БАЗА ДАННЫХ (полная для всех месяцев) =======================
+    const tariffs = { electricity: 3.5, steam: 1417, fuel: 8804 };
 
-        // Стоимость = электроэнергия * 3.5
-        const costFact = elecFact.map(v => v * 3.5);
-        const costPlan = elecPlan.map(v => v * 3.5);
+    // Установка 1 (январь – оригинал, февраль/март – модифицированы ±10%)
+    const unit1_jan = {
+        electricity: { fact: [20082,18082,20082,19082,20082,20082,20083,19080,19011,20059,20081,20007,19100,19100,24102,22938,19048,17931,19899,19926.999,19926.999,19928.001,19800,20814,19795,19785,20844,24845.999,20844,20840], plan: [19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275,19398.275] },
+        raw: { fact: [16230.409,16230.409,15912.778,15912.778,15912.778,15827.454,15827.454,15827.454,15840.261,15465.337,16139.101,16575.545,16630.904,16630.904,16630.904,16460.059,16466.179,16458.929,16589.275,16557.620,16557.620,16557.620,16663.534,16626.466,16850.523,16811.426,16689.644,16689.644,16689.644,16598.388], plan: [15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226,15900.226] },
+        steam: { fact: [17.639,17.651,17.689,17.695,17.710,17.716,17.759,17.807,17.823,17.841,17.886,17.942,17.983,17.948,17.894,17.932,17.940,19.498,22.331,22.355,22.382,22.374,22.342,22.351,22.341,22.367,22.380,22.386,22.377,22.398], plan: [23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787,23.787] },
+        fuel: { fact: [131.099,132.392,132.031,133.081,135.835,138.213,139.121,138.301,139.439,139.674,138.063,137.810,137.100,136.577,136.372,136.815,132.900,136.533,139.274,139.214,140.425,140.786,142.457,142.023,142.089,141.952,141.666,140.358,139.992,139.043], plan: [137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946,137.946] }
+    };
+    function modifyData(data, factor) { return data.map(v => v * factor); }
+    const unit1_feb = {
+        electricity: { fact: modifyData(unit1_jan.electricity.fact, 0.92), plan: modifyData(unit1_jan.electricity.plan, 1.02) },
+        raw: { fact: modifyData(unit1_jan.raw.fact, 0.97), plan: modifyData(unit1_jan.raw.plan, 1.03) },
+        steam: { fact: modifyData(unit1_jan.steam.fact, 0.88), plan: modifyData(unit1_jan.steam.plan, 0.96) },
+        fuel: { fact: modifyData(unit1_jan.fuel.fact, 1.05), plan: modifyData(unit1_jan.fuel.plan, 1.0) }
+    };
+    const unit1_mar = {
+        electricity: { fact: modifyData(unit1_jan.electricity.fact, 1.10), plan: modifyData(unit1_jan.electricity.plan, 0.98) },
+        raw: { fact: modifyData(unit1_jan.raw.fact, 1.05), plan: modifyData(unit1_jan.raw.plan, 0.97) },
+        steam: { fact: modifyData(unit1_jan.steam.fact, 1.12), plan: modifyData(unit1_jan.steam.plan, 0.94) },
+        fuel: { fact: modifyData(unit1_jan.fuel.fact, 0.95), plan: modifyData(unit1_jan.fuel.plan, 1.02) }
+    };
 
-        // Метки оси X (1..30)
-        const labels = Array.from({ length: rawFact.length }, (_, i) => (i + 1).toString());
+    // Установка 2 (январь – оригинал)
+    const unit2_jan = {
+        electricity: { fact: [102012.352,101268.751,101020.249,100439.351,99597.950,98205.001,98530.399,100254.449,98283.101,99435.149,101787.853,103200.851,103848.601,103773.403,103919.000,103593.101,103512.049,105132.398,106470.646,107256.847,106949.749,106079.648,105361.052,107044.699,107583.998,94249.948,107063.900,106343.851,105982.451,107876.849], plan: [107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100,107100] },
+        raw: { fact: [12287.205,12287.205,12272.159,12272.159,12272.159,12318.481,12318.481,12318.481,12281.514,12220.451,12050.506,12281.717,12178.488,12178.488,12178.488,11981.112,12339.959,12258.633,12187.256,12063.214,12063.214,12063.214,12259.075,12440.787,12420.180,12492.220,12474.723,12474.723,12474.723,12561.239], plan: [12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600,12600] },
+        steam: { fact: [129.281,132.975,129.288,129.088,131.147,154.621,157.619,157.576,162.051,160.775,154.787,148.239,139.415,136.709,137.774,138.891,133.498,137.732,141.728,139.664,136.126,141.940,137.466,139.274,136.962,135.990,137.926,141.503,140.393,136.701], plan: [133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275,133.275] },
+        fuel: { fact: [208.805,206.967,207.179,207.872,209.454,213.142,212.287,209.786,212.362,211.997,213.206,217.588,216.059,215.189,214.117,214.220,212.476,213.267,213.286,212.240,213.167,215.230,214.268,212.738,214.609,215.193,213.593,215.282,214.808,212.674], plan: [230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986,230.986] }
+    };
+    const unit2_feb = {
+        electricity: { fact: modifyData(unit2_jan.electricity.fact, 0.94), plan: modifyData(unit2_jan.electricity.plan, 0.99) },
+        raw: { fact: modifyData(unit2_jan.raw.fact, 0.96), plan: modifyData(unit2_jan.raw.plan, 1.02) },
+        steam: { fact: modifyData(unit2_jan.steam.fact, 0.91), plan: modifyData(unit2_jan.steam.plan, 0.98) },
+        fuel: { fact: modifyData(unit2_jan.fuel.fact, 1.03), plan: modifyData(unit2_jan.fuel.plan, 1.0) }
+    };
+    const unit2_mar = {
+        electricity: { fact: modifyData(unit2_jan.electricity.fact, 1.07), plan: modifyData(unit2_jan.electricity.plan, 0.97) },
+        raw: { fact: modifyData(unit2_jan.raw.fact, 1.04), plan: modifyData(unit2_jan.raw.plan, 0.98) },
+        steam: { fact: modifyData(unit2_jan.steam.fact, 1.09), plan: modifyData(unit2_jan.steam.plan, 0.96) },
+        fuel: { fact: modifyData(unit2_jan.fuel.fact, 0.98), plan: modifyData(unit2_jan.fuel.plan, 1.01) }
+    };
 
-        // ========== Общие настройки ==========
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: true,
-            animation: false,               // отключаем анимацию, убираем "тряску"
-            plugins: {
-                legend: { position: 'bottom', labels: { color: '#1e2b3c', font: { size: 12 } } },
-                tooltip: { backgroundColor: '#ffffff', titleColor: '#0f2637', bodyColor: '#4a5a6e', borderColor: '#e9ecef', borderWidth: 1 }
-            },
-            scales: {
-                x: { ticks: { maxTicksLimit: 15, color: '#4a5a6e' }, grid: { display: false }, title: { display: false } },
-                y: { ticks: { color: '#4a5a6e', callback: v => v.toLocaleString() }, grid: { color: '#e9ecef' }, title: { display: false } }
-            }
-        };
+    // Установка 3 (январь – оригинал)
+    const unit3_jan = {
+        electricity: { fact: [133275.479,135112.472,133751.331,134147.611,131282.322,129098.531,128491.510,129990.561,128816.509,127625.660,131111.878,134704.688,136730.079,137832.721,132633.168,132451.471,136232.078,138061.587,137164.480,137269.029,137138.321,136203.841,137073.221,136276.259,137251.571,136946.910,136099.232,131722.882,134971.100,134382.770], plan: [138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155,138806.155] },
+        raw: { fact: [15967.083,15967.083,15854.125,15854.125,15854.125,15833.800,15833.800,15833.800,15920.936,15573.054,16260.787,16596.210,16597.239,16597.239,16597.239,16510.709,16599.797,16641.649,16579.966,16608.300,16608.300,16608.300,16654.204,16704.132,16688.187,16687.089,16605.311,16605.311,16605.311,16378.075], plan: [15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903,15899.903] },
+        steam: { fact: [139.717,145.918,136.530,137.150,140.741,146.438,145.402,167.133,149.070,139.410,132.678,136.499,146.557,132.441,134.997,127.038,122.082,126.992,125.691,118.390,121.632,125.020,124.304,120.358,119.835,122.690,122.304,116.786,118.361,118.280], plan: [185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532,185.532] },
+        fuel: { fact: [50.612,51.626,51.721,52.068,55.143,57.071,56.727,55.765,55.880,55.721,54.671,54.392,54.055,54.216,54.254,54.652,54.817,55.217,55.875,54.962,55.574,55.638,55.394,55.254,55.686,55.667,55.251,55.529,55.646,55.153], plan: [84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195,84.195] }
+    };
+    const unit3_feb = {
+        electricity: { fact: modifyData(unit3_jan.electricity.fact, 0.93), plan: modifyData(unit3_jan.electricity.plan, 1.01) },
+        raw: { fact: modifyData(unit3_jan.raw.fact, 0.98), plan: modifyData(unit3_jan.raw.plan, 1.02) },
+        steam: { fact: modifyData(unit3_jan.steam.fact, 0.89), plan: modifyData(unit3_jan.steam.plan, 0.97) },
+        fuel: { fact: modifyData(unit3_jan.fuel.fact, 1.06), plan: modifyData(unit3_jan.fuel.plan, 1.0) }
+    };
+    const unit3_mar = {
+        electricity: { fact: modifyData(unit3_jan.electricity.fact, 1.08), plan: modifyData(unit3_jan.electricity.plan, 0.96) },
+        raw: { fact: modifyData(unit3_jan.raw.fact, 1.03), plan: modifyData(unit3_jan.raw.plan, 0.99) },
+        steam: { fact: modifyData(unit3_jan.steam.fact, 1.11), plan: modifyData(unit3_jan.steam.plan, 0.95) },
+        fuel: { fact: modifyData(unit3_jan.fuel.fact, 0.96), plan: modifyData(unit3_jan.fuel.plan, 1.02) }
+    };
 
-        // Цвета:
-        const planBlue = 'rgba(41, 128, 185, 0.8)';           // яркий синий (план везде)
-        const planBlueBorder = 'rgba(41, 128, 185, 1)';
-        const orangeFact = 'rgba(255, 140, 66, 0.7)';        // оранжевый (сырьё)
-        const orangeFactBorder = 'rgba(200, 100, 30, 1)';
-        const yellowFact = 'rgba(241, 196, 15, 0.8)';        // жёлтый (электроэнергия)
-        const yellowFactBorder = 'rgba(243, 156, 18, 1)';
-        const greenFact = 'rgba(46, 204, 113, 0.8)';         // ярко-зелёный (стоимость)
-        const greenFactBorder = 'rgba(39, 174, 96, 1)';
+    const dataDB = {
+        unit1: { jan: unit1_jan, feb: unit1_feb, mar: unit1_mar },
+        unit2: { jan: unit2_jan, feb: unit2_feb, mar: unit2_mar },
+        unit3: { jan: unit3_jan, feb: unit3_feb, mar: unit3_mar }
+    };
 
-        // ========== График 1: Сырьё (факт – оранжевый) ==========
-        const rawCtx = document.getElementById('rawMaterialChart').getContext('2d');
-        new Chart(rawCtx, {
+    let charts = { raw: null, resource: null, costResource: null, planDoughnut: null, factDoughnut: null };
+
+    function getData(unit, month) { return dataDB[unit][month]; }
+
+    function updateResourceCharts() {
+        const unit = document.getElementById('unitSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        const resource = document.getElementById('resourceSelect').value;
+        const data = getData(unit, month);
+        
+        let fact, plan, unitLabel, tariff, titleText, costTitleText;
+        if (resource === 'electricity') {
+            fact = data.electricity.fact;
+            plan = data.electricity.plan;
+            unitLabel = 'кВт·ч';
+            tariff = tariffs.electricity;
+            titleText = 'Электроэнергия, кВт·ч';
+            costTitleText = 'Стоимость электроэнергии, руб.';
+        } else if (resource === 'steam') {
+            fact = data.steam.fact;
+            plan = data.steam.plan;
+            unitLabel = 'Гкал';
+            tariff = tariffs.steam;
+            titleText = 'Теплоэнергия (пар), Гкал';
+            costTitleText = 'Стоимость теплоэнергии, руб.';
+        } else {
+            fact = data.fuel.fact;
+            plan = data.fuel.plan;
+            unitLabel = 'тн';
+            tariff = tariffs.fuel;
+            titleText = 'Топливо (газ), тн';
+            costTitleText = 'Стоимость топлива, руб.';
+        }
+        
+        const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
+        // График потребления ресурса
+        if (charts.resource) charts.resource.destroy();
+        charts.resource = new Chart(document.getElementById('resourceChart'), {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Факт', data: rawFact, backgroundColor: orangeFact, borderColor: orangeFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
-                    { label: 'План', data: rawPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
-                ]
-            },
-            options: {
-                ...commonOptions,
-                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} тн` } } }
-            }
+            data: { labels, datasets: [
+                { label: 'Факт', data: fact, backgroundColor: 'rgba(241,196,15,0.8)', borderColor: 'rgba(243,156,18,1)', borderWidth: 1, barPercentage: 0.8 },
+                { label: 'План', data: plan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+            ] },
+            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unitLabel}` } } }, scales: { y: { ticks: { callback: v => v.toLocaleString() } } } }
+        });
+        document.getElementById('resourceChartTitle').innerText = titleText;
+        document.getElementById('resourceNote').innerHTML = `Сравнение фактического и планового потребления ${resource === 'electricity' ? 'электроэнергии' : (resource === 'steam' ? 'теплоэнергии' : 'газа')}.`;
+
+        // График стоимости ресурса
+        const costFact = fact.map(v => v * tariff);
+        const costPlan = plan.map(v => v * tariff);
+        if (charts.costResource) charts.costResource.destroy();
+        charts.costResource = new Chart(document.getElementById('costResourceChart'), {
+            type: 'bar',
+            data: { labels, datasets: [
+                { label: 'Факт', data: costFact, backgroundColor: 'rgba(46,204,113,0.8)', borderColor: 'rgba(39,174,96,1)', borderWidth: 1 },
+                { label: 'План', data: costPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+            ] },
+            options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } }, scales: { y: { ticks: { callback: v => v.toLocaleString() } } } }
+        });
+        document.getElementById('costChartTitle').innerText = costTitleText;
+        document.getElementById('costNote').innerHTML = `Стоимость рассчитана по тарифу ${tariff} руб./${unitLabel}.`;
+    }
+
+    function updateAll() {
+        const unit = document.getElementById('unitSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        const data = getData(unit, month);
+        const rawFact = data.raw.fact, rawPlan = data.raw.plan;
+        const elecFact = data.electricity.fact, elecPlan = data.electricity.plan;
+        const steamFact = data.steam.fact, steamPlan = data.steam.plan;
+        const fuelFact = data.fuel.fact, fuelPlan = data.fuel.plan;
+
+        // Стоимости для верхних таблиц и бубликов (по ТЭР)
+        const totalElecFact = elecFact.reduce((a,b)=>a+b,0);
+        const totalElecPlan = elecPlan.reduce((a,b)=>a+b,0);
+        const totalSteamFact = steamFact.reduce((a,b)=>a+b,0);
+        const totalSteamPlan = steamPlan.reduce((a,b)=>a+b,0);
+        const totalFuelFact = fuelFact.reduce((a,b)=>a+b,0);
+        const totalFuelPlan = fuelPlan.reduce((a,b)=>a+b,0);
+        const costElecSumFact = totalElecFact * tariffs.electricity;
+        const costElecSumPlan = totalElecPlan * tariffs.electricity;
+        const costSteamSumFact = totalSteamFact * tariffs.steam;
+        const costSteamSumPlan = totalSteamPlan * tariffs.steam;
+        const costFuelSumFact = totalFuelFact * tariffs.fuel;
+        const costFuelSumPlan = totalFuelPlan * tariffs.fuel;
+
+        // График сырья (не зависит от ресурса)
+        const labelsRaw = Array.from({ length: rawFact.length }, (_,i)=>i+1);
+        if (charts.raw) charts.raw.destroy();
+        charts.raw = new Chart(document.getElementById('rawMaterialChart'), {
+            type: 'bar', data: { labels: labelsRaw, datasets: [
+                { label: 'Факт', data: rawFact, backgroundColor: 'rgba(255,140,66,0.7)', borderColor: 'rgba(200,100,30,1)', borderWidth: 1, barPercentage: 0.8 },
+                { label: 'План', data: rawPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+            ] }, options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' } } }
         });
 
-        // ========== График 2: Электроэнергия (факт – жёлтый) ==========
-        const elecCtx = document.getElementById('electricityChart').getContext('2d');
-        new Chart(elecCtx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Факт', data: elecFact, backgroundColor: yellowFact, borderColor: yellowFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
-                    { label: 'План', data: elecPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
-                ]
-            },
-            options: {
-                ...commonOptions,
-                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} кВт·ч` } } }
-            }
-        });
+        // Таблицы ТЭР и сырья
+        const tbodyInfo = document.getElementById('summaryInfoBody');
+        tbodyInfo.innerHTML = `
+            <tr><td><strong>Электроэнергия</strong></td><td>${costElecSumPlan.toFixed(1)} руб.</td><td>${costElecSumFact.toFixed(1)} руб.</td><td style="color: ${costElecSumFact-costElecSumPlan>=0?'#ef4444':'#10b981'}">${(costElecSumFact-costElecSumPlan)>0?'+':''}${(costElecSumFact-costElecSumPlan).toFixed(1)} руб.</td><td style="color: ${(costElecSumFact-costElecSumPlan)>=0?'#ef4444':'#10b981'}">${((costElecSumFact-costElecSumPlan)/costElecSumPlan*100).toFixed(1)}%</td></tr>
+            <tr><td><strong>Теплоэнергия</strong></td><td>${costSteamSumPlan.toFixed(1)} руб.</td><td>${costSteamSumFact.toFixed(1)} руб.</td><td style="color: ${costSteamSumFact-costSteamSumPlan>=0?'#ef4444':'#10b981'}">${(costSteamSumFact-costSteamSumPlan)>0?'+':''}${(costSteamSumFact-costSteamSumPlan).toFixed(1)} руб.</td><td style="color: ${(costSteamSumFact-costSteamSumPlan)>=0?'#ef4444':'#10b981'}">${((costSteamSumFact-costSteamSumPlan)/costSteamSumPlan*100).toFixed(1)}%</td></tr>
+            <tr><td><strong>Топливо (газ)</strong></td><td>${costFuelSumPlan.toFixed(1)} руб.</td><td>${costFuelSumFact.toFixed(1)} руб.</td><td style="color: ${costFuelSumFact-costFuelSumPlan>=0?'#ef4444':'#10b981'}">${(costFuelSumFact-costFuelSumPlan)>0?'+':''}${(costFuelSumFact-costFuelSumPlan).toFixed(1)} руб.</td><td style="color: ${(costFuelSumFact-costFuelSumPlan)>=0?'#ef4444':'#10b981'}">${((costFuelSumFact-costFuelSumPlan)/costFuelSumPlan*100).toFixed(1)}%</td></tr>
+            <tr><td><strong>Итого ТЭР</strong></td><td>${(costElecSumPlan+costSteamSumPlan+costFuelSumPlan).toFixed(1)} руб.</td><td>${(costElecSumFact+costSteamSumFact+costFuelSumFact).toFixed(1)} руб.</td><td style="color: ${(costElecSumFact+costSteamSumFact+costFuelSumFact)-(costElecSumPlan+costSteamSumPlan+costFuelSumPlan)>=0?'#ef4444':'#10b981'}">${((costElecSumFact+costSteamSumFact+costFuelSumFact)-(costElecSumPlan+costSteamSumPlan+costFuelSumPlan))>0?'+':''}${((costElecSumFact+costSteamSumFact+costFuelSumFact)-(costElecSumPlan+costSteamSumPlan+costFuelSumPlan)).toFixed(1)} руб.</td><td style="color: ${((costElecSumFact+costSteamSumFact+costFuelSumFact)-(costElecSumPlan+costSteamSumPlan+costFuelSumPlan))>=0?'#ef4444':'#10b981'}">${(((costElecSumFact+costSteamSumFact+costFuelSumFact)-(costElecSumPlan+costSteamSumPlan+costFuelSumPlan))/(costElecSumPlan+costSteamSumPlan+costFuelSumPlan)*100).toFixed(1)}%</td></tr>
+        `;
+        const totalRawFact = rawFact.reduce((a,b)=>a+b,0);
+        const totalRawPlan = rawPlan.reduce((a,b)=>a+b,0);
+        const rawDev = totalRawFact - totalRawPlan;
+        document.getElementById('rawSummaryBody').innerHTML = `
+            <tr><td><strong>Сырьё</strong></td><td>${totalRawPlan.toFixed(1)} тн</td><td>${totalRawFact.toFixed(1)} тн</td><td style="color: ${rawDev>=0?'#ef4444':'#10b981'}">${rawDev>0?'+':''}${rawDev.toFixed(1)} тн</td><td style="color: ${rawDev>=0?'#ef4444':'#10b981'}">${(rawDev/totalRawPlan*100).toFixed(1)}%</td></tr>
+        `;
 
-        // ========== График 3: Стоимость (факт – ярко-зелёный) ==========
-        const costCtx = document.getElementById('costChart').getContext('2d');
-        new Chart(costCtx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Факт', data: costFact, backgroundColor: greenFact, borderColor: greenFactBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 2 },
-                    { label: 'План', data: costPlan, backgroundColor: planBlue, borderColor: planBlueBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9, order: 1 }
-                ]
-            },
-            options: {
-                ...commonOptions,
-                plugins: { ...commonOptions.plugins, tooltip: { ...commonOptions.plugins.tooltip, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } }
-            }
-        });
+        // Бублики
+        const planData = [costElecSumPlan, costSteamSumPlan, costFuelSumPlan];
+        const factData = [costElecSumFact, costSteamSumFact, costFuelSumFact];
+        if (charts.planDoughnut) charts.planDoughnut.destroy();
+        if (charts.factDoughnut) charts.factDoughnut.destroy();
+        charts.planDoughnut = new Chart(document.getElementById('planDoughnutChart'), { type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: planData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '30%' } });
+        charts.factDoughnut = new Chart(document.getElementById('factDoughnutChart'), { type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: factData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '30%' } });
+
+        // Детальная таблица (показывает сырьё, электроэнергию и её стоимость – не зависит от выбора ресурса)
+        const tbodyDaily = document.querySelector('#dailyTable tbody');
+        tbodyDaily.innerHTML = '';
+        for (let i=0; i<30; i++) {
+            const rawDevDay = rawFact[i]-rawPlan[i];
+            const elecDev = elecFact[i]-elecPlan[i];
+            const costDev = (elecFact[i]*tariffs.electricity) - (elecPlan[i]*tariffs.electricity);
+            tbodyDaily.insertAdjacentHTML('beforeend', `
+                <tr><td>${i+1}</td>
+                <td>${rawFact[i].toFixed(3)}</td><td>${rawPlan[i].toFixed(3)}</td><td style="color: ${rawDevDay>=0?'#ef4444':'#10b981'}">${rawDevDay>0?'+':''}${rawDevDay.toFixed(3)}</td>
+                <td>${elecFact[i].toFixed(3)}</td><td>${elecPlan[i].toFixed(3)}</td><td style="color: ${elecDev>=0?'#ef4444':'#10b981'}">${elecDev>0?'+':''}${elecDev.toFixed(3)}</td>
+                <td>${(elecFact[i]*tariffs.electricity).toFixed(2)}</td><td>${(elecPlan[i]*tariffs.electricity).toFixed(2)}</td><td style="color: ${costDev>=0?'#ef4444':'#10b981'}">${costDev>0?'+':''}${costDev.toFixed(2)}</td>
+            </tr>
+            `);
+        }
+
+        // Обновить графики ресурса и его стоимости (зависят от выбора ресурса)
+        updateResourceCharts();
+    }
+
+    // Подписка на изменения всех фильтров
+    document.getElementById('unitSelect').addEventListener('change', () => { updateAll(); });
+    document.getElementById('monthSelect').addEventListener('change', () => { updateAll(); });
+    document.getElementById('resourceSelect').addEventListener('change', () => { updateResourceCharts(); });
+
+    // Экспорт Excel (детальной таблицы)
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+        const unit = document.getElementById('unitSelect').value;
+        const month = document.getElementById('monthSelect').value;
+        const data = getData(unit, month);
+        const rawFact = data.raw.fact, rawPlan = data.raw.plan;
+        const elecFact = data.electricity.fact, elecPlan = data.electricity.plan;
+        let csv = "День;Сырье факт,тн;Сырье план,тн;Сырье откл,тн;Эл.эн факт,кВтч;Эл.эн план,кВтч;Эл.эн откл,кВтч;Стоимость факт,руб;Стоимость план,руб;Стоимость откл,руб\n";
+        for(let i=0;i<30;i++) csv += `${i+1};${rawFact[i].toFixed(3)};${rawPlan[i].toFixed(3)};${(rawFact[i]-rawPlan[i]).toFixed(3)};${elecFact[i].toFixed(3)};${elecPlan[i].toFixed(3)};${(elecFact[i]-elecPlan[i]).toFixed(3)};${(elecFact[i]*tariffs.electricity).toFixed(2)};${(elecPlan[i]*tariffs.electricity).toFixed(2)};${((elecFact[i]-elecPlan[i])*tariffs.electricity).toFixed(2)}\n`;
+        const blob = new Blob(['\uFEFF'+csv], {type: 'text/csv;charset=utf-8;'});
+        const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'plan_fact_data.csv'; link.click(); URL.revokeObjectURL(link.href);
     });
+    document.getElementById('exportPdfBtn').addEventListener('click', () => window.print());
+
+    // Переключение вкладок
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+    }));
+    updateAll();
 </script>
+<style>
+    .filters-panel { background: #f9fafc; padding: 1rem; border-radius: 20px; border: 1px solid #e9ecef; }
+    .filter-group { display: flex; align-items: center; gap: 0.5rem; }
+    .filter-select { padding: 0.4rem 0.8rem; border-radius: 12px; border: 1px solid #cbd5e1; background: white; font-family: 'Inter', sans-serif; }
+    .export-block { margin-bottom: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem; }
+    .export-btn { background: white; border: 1.5px solid #cbd5e1; border-radius: 30px; padding: 0.5rem 1.2rem; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: #1e2b3c; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .export-btn:hover { border-color: #7fc1e5; background: #f5fcff; color: #0369a1; }
+    .tabs-container { margin-top: 2rem; }
+    .tabs-header { display: flex; gap: 0.5rem; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
+    .tab-btn { background: none; border: none; padding: 0.6rem 1.5rem; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 500; color: #4a5a6e; cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.2s; }
+    .tab-btn:hover { background: #f8fcff; color: #0369a1; }
+    .tab-btn.active { color: #0369a1; border-bottom: 2px solid #7fc1e5; background: #f0f9ff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #e9ecef; background: white; margin-bottom: 1rem; }
+    .data-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+    .data-table th, .data-table td { padding: 0.6rem 0.5rem; text-align: right; border-bottom: 1px solid #e9ecef; color: #4a5a6e; }
+    .data-table th { background: #f9fafc; color: #0f2637; font-weight: 500; border-bottom: 2px solid #e0f2fe; text-align: center; }
+    .data-table td:first-child, .data-table th:first-child { text-align: left; font-weight: 500; color: #0f2637; }
+    .graph-card { background: white; border: 1px solid #e9ecef; border-radius: 24px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: all 0.3s; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 280px; }
+    .graph-card canvas { width: 100% !important; height: 100% !important; }
+    .graph-title { font-size: 1.2rem; font-weight: 500; margin: 1rem 0 0.5rem; }
+    .graph-note { color: #94a3b8; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; }
+</style>
 {% endblock %}

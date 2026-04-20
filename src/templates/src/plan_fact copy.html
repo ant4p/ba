@@ -8,111 +8,217 @@
     <!-- Заголовок страницы -->
     <div class="page-header">
         <h1 class="page-title">Сводные данные</h1>
-        <p class="page-subtitle">План/факт количества сырья, количества и стоимости электроэнергии</p>
+        <p class="page-subtitle">План/факт количества сырья, электроэнергии и её стоимости</p>
     </div>
 
-    <!-- График: сырьё факт vs план -->
-    <div class="graph-card" style="height: auto; min-height: 300px;">
-        <h2 class="graph-title" style="font-size: 1.2rem;">Сырье, тн</h2>
-        <canvas id="rawMaterialChart" width="800" height="250" style="width:100%; height:250px;"></canvas>
-        <p class="graph-note">Сравнение фактического и планового потребления сырья по дням (1–90).</p>
+    <!-- Общий заголовок для двух бубликов -->
+    <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Плановая стоимость ТЭР / Фактическая стоимость ТЭР</h2>
+
+    <!-- Блок с двумя бубликами в одной строке -->
+    <div class="doughnuts-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div class="graph-card" style="height: 320px; display: flex; flex-direction: column; padding: 1rem;">
+            <canvas id="planDoughnutChart" style="flex: 1; min-height: 0; width: 100%;"></canvas>
+        </div>
+        <div class="graph-card" style="height: 320px; display: flex; flex-direction: column; padding: 1rem;">
+            <canvas id="factDoughnutChart" style="flex: 1; min-height: 0; width: 100%;"></canvas>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="tabs-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="graphs">Графики</button>
+            <button class="tab-btn" data-tab="tables">Сводная таблица</button>
+        </div>
+
+        <!-- Вкладка "Графики" -->
+        <div id="graphs-tab" class="tab-content active">
+            <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Сырье, тн</h2>
+            <div class="graph-card" style="height: 280px; display: flex; flex-direction: column; padding: 0.5rem;">
+                <canvas id="rawMaterialChart" style="flex: 1; min-height: 0; width: 100%;"></canvas>
+            </div>
+            <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления сырья по дням (1–30).</p>
+
+            <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Электроэнергия, кВт·ч</h2>
+            <div class="graph-card" style="height: 280px; display: flex; flex-direction: column; padding: 0.5rem;">
+                <canvas id="electricityChart" style="flex: 1; min-height: 0; width: 100%;"></canvas>
+            </div>
+            <p class="graph-note" style="margin-top: 0.5rem;">Сравнение фактического и планового потребления электроэнергии.</p>
+
+            <h2 class="graph-title" style="font-size: 1.2rem; margin-bottom: 0.5rem; margin-top: 2rem;">Стоимость электроэнергии, руб.</h2>
+            <div class="graph-card" style="height: 280px; display: flex; flex-direction: column; padding: 0.5rem;">
+                <canvas id="costChart" style="flex: 1; min-height: 0; width: 100%;"></canvas>
+            </div>
+            <p class="graph-note" style="margin-top: 0.5rem;">Стоимость = потребление (кВт·ч) × 3,5 руб.</p>
+        </div>
+
+        <!-- Вкладка "Сводная таблица" (объединённая) -->
+        <div id="tables-tab" class="tab-content">
+            <div class="table-wrapper" style="overflow-x: auto;">
+                <table class="data-table" id="summaryTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">День</th>
+                            <th colspan="3">Сырье (тн)</th>
+                            <th colspan="3">Электроэнергия (кВт·ч)</th>
+                            <th colspan="3">Стоимость электроэнергии (руб.)</th>
+                        </tr>
+                        <tr>
+                            <th>Факт</th><th>План</th><th>Откл.</th>
+                            <th>Факт</th><th>План</th><th>Откл.</th>
+                            <th>Факт</th><th>План</th><th>Откл.</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Подключение Chart.js (если ещё не подключён в base.html) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Данные (90 точек) для сырья
+        // ========== Данные (30 дней) ==========
         const rawFact = [
             16230.409, 16230.409, 15912.778, 15912.778, 15912.778, 15827.454, 15827.454, 15827.454, 15840.261, 15465.337,
             16139.101, 16575.545, 16630.904, 16630.904, 16630.904, 16460.059, 16466.179, 16458.929, 16589.275, 16557.620,
             16557.620, 16557.620, 16663.534, 16626.466, 16850.523, 16811.426, 16689.644, 16689.644, 16689.644, 16598.388
         ];
-
         const rawPlan = [
             15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
             15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226,
             15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226, 15900.226
         ];
-
-        // Метки оси X: от 1 до 90
+        const elecFact = [
+            20082.000, 18082.000, 20082.000, 19082.000, 20082.000, 20082.000, 20083.000, 19080.000, 19011.000, 20059.000,
+            20081.000, 20007.000, 19100.000, 19100.000, 24102.000, 22938.000, 19048.000, 17931.000, 19899.000, 19926.999,
+            19926.999, 19928.001, 19800.000, 20814.000, 19795.000, 19785.000, 20844.000, 24845.999, 20844.000, 20840.000
+        ];
+        const elecPlan = [
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275,
+            19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275, 19398.275
+        ];
+        const costFact = elecFact.map(v => v * 3.5);
+        const costPlan = elecPlan.map(v => v * 3.5);
         const labels = Array.from({ length: rawFact.length }, (_, i) => (i + 1).toString());
 
-        const canvas = document.getElementById('rawMaterialChart');
-        if (!canvas) {
-            console.error('Canvas element not found');
-            return;
+        // Данные для бубликов (пар, газ) – из прежних данных
+        const steamFact = [
+            17.639, 17.651, 17.689, 17.695, 17.710, 17.716, 17.759, 17.807, 17.823, 17.841,
+            17.886, 17.942, 17.983, 17.948, 17.894, 17.932, 17.940, 19.498, 22.331, 22.355,
+            22.382, 22.374, 22.342, 22.351, 22.341, 22.367, 22.380, 22.386, 22.377, 22.398
+        ];
+        const steamPlan = [
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787,
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787,
+            23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787, 23.787
+        ];
+        const gasFact = [
+            131.099, 132.392, 132.031, 133.081, 135.835, 138.213, 139.121, 138.301, 139.439, 139.674,
+            138.063, 137.810, 137.100, 136.577, 136.372, 136.815, 132.900, 136.533, 139.274, 139.214,
+            140.425, 140.786, 142.457, 142.023, 142.089, 141.952, 141.666, 140.358, 139.992, 139.043
+        ];
+        const gasPlan = [
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946,
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946,
+            137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946, 137.946
+        ];
+
+        const tariffElec = 3.5, tariffSteam = 1417, tariffGas = 8804;
+        function sumArray(arr) { return arr.reduce((a,b) => a + b, 0); }
+
+        const totalElecFact = sumArray(elecFact), totalElecPlan = sumArray(elecPlan);
+        const totalSteamFact = sumArray(steamFact), totalSteamPlan = sumArray(steamPlan);
+        const totalGasFact = sumArray(gasFact), totalGasPlan = sumArray(gasPlan);
+
+        const costElecFact = totalElecFact * tariffElec, costElecPlan = totalElecPlan * tariffElec;
+        const costSteamFact = totalSteamFact * tariffSteam, costSteamPlan = totalSteamPlan * tariffSteam;
+        const costGasFact = totalGasFact * tariffGas, costGasPlan = totalGasPlan * tariffGas;
+
+        const planCostData = [costElecPlan, costSteamPlan, costGasPlan];
+        const factCostData = [costElecFact, costSteamFact, costGasFact];
+        const resourceLabels = ['Электроэнергия', 'Пар', 'Газ'];
+        const colors = ['rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)'];
+
+        // Бублики
+        new Chart(document.getElementById('planDoughnutChart'), {
+            type: 'doughnut', data: { labels: resourceLabels, datasets: [{ data: planCostData, backgroundColor: colors, borderColor: '#fff', borderWidth: 2, hoverOffset: 10 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } }, tooltip: { callbacks: { label: (ctx) => { const val = ctx.raw; const total = ctx.dataset.data.reduce((a,b)=>a+b,0); return `${ctx.label}: ${val.toFixed(0)} руб. (${((val/total)*100).toFixed(1)}%)`; } } } }, cutout: '30%' }
+        });
+        new Chart(document.getElementById('factDoughnutChart'), {
+            type: 'doughnut', data: { labels: resourceLabels, datasets: [{ data: factCostData, backgroundColor: colors, borderColor: '#fff', borderWidth: 2, hoverOffset: 10 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } }, tooltip: { callbacks: { label: (ctx) => { const val = ctx.raw; const total = ctx.dataset.data.reduce((a,b)=>a+b,0); return `${ctx.label}: ${val.toFixed(0)} руб. (${((val/total)*100).toFixed(1)}%)`; } } } }, cutout: '30%' }
+        });
+
+        // Функции для графиков (столбчатые)
+        function createPlanFactChart(canvasId, factData, planData, unit, factColor, factBorder, planColor, planBorder) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', data: { labels: labels, datasets: [
+                    { label: 'Факт', data: factData, backgroundColor: factColor, borderColor: factBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9 },
+                    { label: 'План', data: planData, backgroundColor: planColor, borderColor: planBorder, borderWidth: 1, borderRadius: 0, barPercentage: 0.8, categoryPercentage: 0.9 }
+                ] },
+                options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } }, onClick: (e, item, legend) => { const idx = item.datasetIndex; legend.chart.getDatasetMeta(idx).hidden = !legend.chart.getDatasetMeta(idx).hidden; legend.chart.update(); } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unit}` } } }, scales: { x: { ticks: { maxTicksLimit: 15 }, grid: { display: false } }, y: { ticks: { callback: v => v.toLocaleString() }, grid: { color: '#e9ecef' } } } }
+            });
         }
-        const ctx = canvas.getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Факт (тн)',
-                        data: rawFact,
-                        backgroundColor: 'rgba(255, 140, 66, 0.7)',
-                        borderColor: '#cc6b2c',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        barPercentage: 0.8,
-                        categoryPercentage: 0.9,
-                        order: 2
-                    },
-                    {
-                        label: 'План (тн)',
-                        data: rawPlan,
-                        backgroundColor: 'rgba(76, 159, 112, 0.5)',
-                        borderColor: '#2e6b46',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        barPercentage: 0.8,
-                        categoryPercentage: 0.9,
-                        order: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: { color: '#1e2b3c', font: { size: 12 } }
-                    },
-                    tooltip: {
-                        backgroundColor: '#ffffff',
-                        titleColor: '#0f2637',
-                        bodyColor: '#4a5a6e',
-                        borderColor: '#e9ecef',
-                        borderWidth: 1,
-                        callbacks: {
-                            label: (context) => {
-                                const label = context.dataset.label || '';
-                                const value = context.raw.toFixed(3);
-                                return `${label}: ${value} тн`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Номер наблюдения', color: '#1e2b3c', font: { size: 11 } },
-                        ticks: { maxTicksLimit: 15, color: '#4a5a6e' },
-                        grid: { display: false }
-                    },
-                    y: {
-                        title: { display: true, text: 'тонны', color: '#1e2b3c', font: { size: 11 } },
-                        ticks: { color: '#4a5a6e', callback: v => v.toLocaleString() },
-                        grid: { color: '#e9ecef' }
-                    }
-                },
-                layout: { padding: { top: 10, bottom: 10, left: 5, right: 5 } }
-            }
+        const planBlue = 'rgba(41, 128, 185, 0.8)', planBlueBorder = 'rgba(41, 128, 185, 1)';
+        const orangeFact = 'rgba(255, 140, 66, 0.7)', orangeFactBorder = 'rgba(200, 100, 30, 1)';
+        const yellowFact = 'rgba(241, 196, 15, 0.8)', yellowFactBorder = 'rgba(243, 156, 18, 1)';
+        const greenFact = 'rgba(46, 204, 113, 0.8)', greenFactBorder = 'rgba(39, 174, 96, 1)';
+
+        createPlanFactChart('rawMaterialChart', rawFact, rawPlan, 'тн', orangeFact, orangeFactBorder, planBlue, planBlueBorder);
+        createPlanFactChart('electricityChart', elecFact, elecPlan, 'кВт·ч', yellowFact, yellowFactBorder, planBlue, planBlueBorder);
+        createPlanFactChart('costChart', costFact, costPlan, 'руб.', greenFact, greenFactBorder, planBlue, planBlueBorder);
+
+        // Заполнение сводной таблицы (объединённой)
+        const tbody = document.querySelector('#summaryTable tbody');
+        for (let i = 0; i < labels.length; i++) {
+            const rawDev = rawFact[i] - rawPlan[i];
+            const elecDev = elecFact[i] - elecPlan[i];
+            const costDev = costFact[i] - costPlan[i];
+            const row = `
+                <tr>
+                    <td>${labels[i]}</td>
+                    <td>${rawFact[i].toFixed(3)}</td><td>${rawPlan[i].toFixed(3)}</td>
+                    <td style="color: ${rawDev > 0 ? '#ef4444' : (rawDev < 0 ? '#10b981' : 'inherit')}">${rawDev > 0 ? '+' : ''}${rawDev.toFixed(3)}</td>
+                    <td>${elecFact[i].toFixed(3)}</td><td>${elecPlan[i].toFixed(3)}</td>
+                    <td style="color: ${elecDev > 0 ? '#ef4444' : (elecDev < 0 ? '#10b981' : 'inherit')}">${elecDev > 0 ? '+' : ''}${elecDev.toFixed(3)}</td>
+                    <td>${costFact[i].toFixed(3)}</td><td>${costPlan[i].toFixed(3)}</td>
+                    <td style="color: ${costDev > 0 ? '#ef4444' : (costDev < 0 ? '#10b981' : 'inherit')}">${costDev > 0 ? '+' : ''}${costDev.toFixed(3)}</td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('beforeend', row);
+        }
+
+        // Переключение вкладок
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tab}-tab`).classList.add('active');
+            });
         });
     });
 </script>
+
+<style>
+    .tabs-container { margin-top: 2rem; }
+    .tabs-header { display: flex; gap: 0.5rem; border-bottom: 1px solid #e9ecef; margin-bottom: 2rem; }
+    .tab-btn { background: none; border: none; padding: 0.6rem 1.5rem; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 500; color: #4a5a6e; cursor: pointer; transition: all 0.2s; border-radius: 8px 8px 0 0; }
+    .tab-btn:hover { background-color: #f8fcff; color: #0369a1; }
+    .tab-btn.active { color: #0369a1; border-bottom: 2px solid #7fc1e5; background-color: #f0f9ff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #e9ecef; background: #fff; }
+    .data-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+    .data-table th, .data-table td { padding: 0.6rem 0.5rem; text-align: right; border-bottom: 1px solid #e9ecef; color: #4a5a6e; }
+    .data-table th { background-color: #f9fafc; color: #0f2637; font-weight: 500; border-bottom: 2px solid #e0f2fe; text-align: center; }
+    .data-table td:first-child, .data-table th:first-child { text-align: left; font-weight: 500; color: #0f2637; }
+    .data-table tr:hover td { background-color: #f8fcff; }
+</style>
 {% endblock %}

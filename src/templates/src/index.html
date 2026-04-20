@@ -11,7 +11,7 @@
         <p class="page-subtitle">Выберите раздел для работы с данными</p>
     </div>
 
-    <!-- Сетка модулей (3x2) -->
+    <!-- Сетка модулей (3x3) -->
     <div class="modules-grid">
         <!-- Графики ЭБЛ -->
         <div class="module-card">
@@ -104,6 +104,22 @@
                 <span class="feature-tag">Разброс</span>
             </div>
             <a href="{% url 'src:nets' %}" class="module-button">
+                Перейти
+                <span class="button-arrow">→</span>
+            </a>
+        </div>
+
+        <!-- НОВЫЙ МОДУЛЬ: План/факт -->
+        <div class="module-card">
+            <div class="module-icon">📉</div>
+            <h2 class="module-title">План/факт</h2>
+            <p class="module-description">Сравнение плановых и фактических показателей по сырью, электроэнергии, теплоэнергии и газу.</p>
+            <div class="module-features">
+                <span class="feature-tag">Динамика</span>
+                <span class="feature-tag">Отклонения</span>
+                <span class="feature-tag">Стоимость</span>
+            </div>
+            <a href="{% url 'src:plan_fact' %}" class="module-button">
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
