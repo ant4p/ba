@@ -1,14 +1,14 @@
-<!-- ==================== plan_fact.html ==================== -->
+<!-- ==================== plan_fact_line.html ==================== -->
 {% extends 'base.html' %}
 
-{% block title %}План/факт - Модуль бизнес-аналитики{% endblock %}
+{% block title %}План/факт (линейные графики) - Модуль бизнес-аналитики{% endblock %}
 
 {% block content %}
 <div class="graph-container">
     <!-- Заголовок страницы -->
     <div class="page-header">
         <h1 class="page-title">Сводные данные</h1>
-        <p class="page-subtitle">План/факт количества сырья, электроэнергии и её стоимости</p>
+        <p class="page-subtitle">План/факт количества сырья, электроэнергии и её стоимости (линейные графики)</p>
     </div>
 
     <!-- Панель фильтров (установка, месяц, ресурс) -->
@@ -76,17 +76,17 @@
         </div>
 
         <div id="graphs-tab" class="tab-content active">
-            <!-- График 1: Сырьё (не зависит от выбора ресурса) -->
+            <!-- График 1: Сырьё (линейный) -->
             <h2 class="graph-title">Сырье, тн</h2>
             <div class="graph-card" style="height: 280px;"><canvas id="rawMaterialChart"></canvas></div>
             <p class="graph-note">Сравнение фактического и планового потребления сырья по дням (1–30).</p>
 
-            <!-- График 2: выбранный ресурс (электроэнергия/пар/газ) -->
+            <!-- График 2: выбранный ресурс (линейный) -->
             <h2 class="graph-title" id="resourceChartTitle">Электроэнергия, кВт·ч</h2>
             <div class="graph-card" style="height: 280px;"><canvas id="resourceChart"></canvas></div>
             <p class="graph-note" id="resourceNote">Сравнение фактического и планового потребления выбранного ресурса.</p>
 
-            <!-- График 3: стоимость выбранного ресурса -->
+            <!-- График 3: стоимость выбранного ресурса (линейный) -->
             <h2 class="graph-title" id="costChartTitle">Стоимость электроэнергии, руб.</h2>
             <div class="graph-card" style="height: 280px;"><canvas id="costResourceChart"></canvas></div>
             <p class="graph-note" id="costNote">Стоимость рассчитана по тарифу.</p>
@@ -207,10 +207,10 @@
         const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
         if (charts.resource) charts.resource.destroy();
         charts.resource = new Chart(document.getElementById('resourceChart'), {
-            type: 'bar',
+            type: 'line',
             data: { labels, datasets: [
-                { label: 'Факт', data: fact, backgroundColor: 'rgba(241,196,15,0.8)', borderColor: 'rgba(243,156,18,1)', borderWidth: 1, barPercentage: 0.8 },
-                { label: 'План', data: plan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+                { label: 'Факт', data: fact, borderColor: 'rgba(241,196,15,1)', backgroundColor: 'rgba(241,196,15,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 },
+                { label: 'План', data: plan, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 }
             ] },
             options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unitLabel}` } } }, scales: { y: { ticks: { callback: v => v.toLocaleString() } } } }
         });
@@ -221,10 +221,10 @@
         const costPlan = plan.map(v => v * tariff);
         if (charts.costResource) charts.costResource.destroy();
         charts.costResource = new Chart(document.getElementById('costResourceChart'), {
-            type: 'bar',
+            type: 'line',
             data: { labels, datasets: [
-                { label: 'Факт', data: costFact, backgroundColor: 'rgba(46,204,113,0.8)', borderColor: 'rgba(39,174,96,1)', borderWidth: 1 },
-                { label: 'План', data: costPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+                { label: 'Факт', data: costFact, borderColor: 'rgba(46,204,113,1)', backgroundColor: 'rgba(46,204,113,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 },
+                { label: 'План', data: costPlan, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 }
             ] },
             options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } }, scales: { y: { ticks: { callback: v => v.toLocaleString() } } } }
         });
@@ -255,13 +255,13 @@
         const costFuelSumFact = totalFuelFact * tariffs.fuel;
         const costFuelSumPlan = totalFuelPlan * tariffs.fuel;
 
-        // График сырья (не зависит от ресурса)
+        // График сырья (линейный)
         const labelsRaw = Array.from({ length: rawFact.length }, (_,i)=>i+1);
         if (charts.raw) charts.raw.destroy();
         charts.raw = new Chart(document.getElementById('rawMaterialChart'), {
-            type: 'bar', data: { labels: labelsRaw, datasets: [
-                { label: 'Факт', data: rawFact, backgroundColor: 'rgba(255,140,66,0.7)', borderColor: 'rgba(200,100,30,1)', borderWidth: 1, barPercentage: 0.8 },
-                { label: 'План', data: rawPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+            type: 'line', data: { labels: labelsRaw, datasets: [
+                { label: 'Факт', data: rawFact, borderColor: 'rgba(255,140,66,1)', backgroundColor: 'rgba(255,140,66,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 },
+                { label: 'План', data: rawPlan, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, fill: true, tension: 0.2 }
             ] }, options: { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { position: 'bottom' } } }
         });
 
@@ -349,7 +349,7 @@
         let csv = "День;Сырье факт,тн;Сырье план,тн;Сырье откл,тн;Эл.эн факт,кВтч;Эл.эн план,кВтч;Эл.эн откл,кВтч;Стоимость факт,руб;Стоимость план,руб;Стоимость откл,руб\n";
         for(let i=0;i<30;i++) csv += `${i+1};${rawFact[i].toFixed(3)};${rawPlan[i].toFixed(3)};${(rawFact[i]-rawPlan[i]).toFixed(3)};${elecFact[i].toFixed(3)};${elecPlan[i].toFixed(3)};${(elecFact[i]-elecPlan[i]).toFixed(3)};${(elecFact[i]*tariffs.electricity).toFixed(2)};${(elecPlan[i]*tariffs.electricity).toFixed(2)};${((elecFact[i]-elecPlan[i])*tariffs.electricity).toFixed(2)}\n`;
         const blob = new Blob(['\uFEFF'+csv], {type: 'text/csv;charset=utf-8;'});
-        const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'plan_fact_data.csv'; link.click(); URL.revokeObjectURL(link.href);
+        const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'plan_fact_line_data.csv'; link.click(); URL.revokeObjectURL(link.href);
     });
     document.getElementById('exportPdfBtn').addEventListener('click', () => window.print());
 

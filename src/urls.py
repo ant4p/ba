@@ -9,7 +9,8 @@ from src.views import (
     ShowTablesSvod,
     ShowGraphsEnergyEbl,
     ShowGraphsEnergyIee,
-    ShowPlanFact
+    ShowPlanFact,
+    ShowFactPlan
 )
 
 app_name = "src"
@@ -24,4 +25,5 @@ urlpatterns = [
     path("graphs_ebl/", ShowGraphsEnergyEbl.as_view(), name="graphs_ebl"),
     path("graphs_iee/", ShowGraphsEnergyIee.as_view(), name="graphs_iee"),
     path("plan_fact/", ShowPlanFact.as_view(), name="plan_fact"),
+    path("fact_plan/", ShowFactPlan.as_view(), name="fact_plan"),
 ]
