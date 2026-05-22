@@ -241,7 +241,7 @@ body {
     font-weight: 400;
     border-radius: 8px;
     border: 1px solid transparent;
-    transition: all 0.2s ease;
+    transition: abackground-color 0.2s, color 0.2s;
 }
 
 .nav-item:hover {
@@ -254,7 +254,7 @@ body {
     background-color: #f0f9ff;
     border-color: #b9dcf2;
     color: #0369a1;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .nav-divider {

@@ -6,9 +6,9 @@ from src.views import (
     ShowGraphs,
     ShowNets,
     ShowTables,
-    ShowTablesSvod,
-    ShowGraphsEnergyEbl,
-    ShowGraphsEnergyIee,
+    ShowKeys,
+    ShowIndicators,
+    ShowIntensity,
     ShowPlanFact,
     ShowFactPlan
 )
@@ -21,9 +21,9 @@ urlpatterns = [
     path("graphs/", ShowGraphs.as_view(), name="graphs"),
     path("nets/", ShowNets.as_view(), name="nets"),
     path("tables/", ShowTables.as_view(), name="tables"),
-    path("tables_svod/", ShowTablesSvod.as_view(), name="tables_svod"),
-    path("graphs_ebl/", ShowGraphsEnergyEbl.as_view(), name="graphs_ebl"),
-    path("graphs_iee/", ShowGraphsEnergyIee.as_view(), name="graphs_iee"),
+    path("keys/", ShowKeys.as_view(), name="keys"),
+    path("indicators/", ShowIndicators.as_view(), name="indicators"),
+    path("intensity/", ShowIntensity.as_view(), name="intensity"),
     path("plan_fact/", ShowPlanFact.as_view(), name="plan_fact"),
     path("fact_plan/", ShowFactPlan.as_view(), name="fact_plan"),
 ]

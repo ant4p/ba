@@ -20,15 +20,15 @@ class ShowNets(TemplateView):
 class ShowTables(TemplateView):
     template_name = "src/tables.html"
 
-class ShowTablesSvod(TemplateView):
-    template_name = "src/tables_svod.html"
+class ShowKeys(TemplateView):
+    template_name = "src/keys.html"
 
 
-class ShowGraphsEnergyEbl(TemplateView):
-    template_name = "src/graphs_energy_ebl.html"
+class ShowIndicators(TemplateView):
+    template_name = "src/indicators.html"
 
-class ShowGraphsEnergyIee(TemplateView):
-    template_name = "src/graphs_energy_iee.html"
+class ShowIntensity(TemplateView):
+    template_name = "src/intensity.html"
 
 class ShowPlanFact(TemplateView):
     template_name = "src/plan_fact.html"

@@ -16,14 +16,14 @@
         <!-- Графики ЭБЛ -->
         <div class="module-card">
             <div class="module-icon">⚡</div>
-            <h2 class="module-title">Графики ЭБЛ</h2>
+            <h2 class="module-title">Ключевые показатели энергоэффективности по предприятию</h2>
             <p class="module-description">Анализ электропотребления, паровой нагрузки и газопотребления для установок 1‑4.</p>
             <div class="module-features">
                 <span class="feature-tag">Энергия</span>
                 <span class="feature-tag">Пар</span>
                 <span class="feature-tag">Газ</span>
             </div>
-            <a href="{% url 'src:graphs_ebl' %}" class="module-button">
+            <a href="{% url 'src:keys' %}" class="module-button">
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
@@ -31,15 +31,15 @@
 
         <!-- Графики ИЭЭ -->
         <div class="module-card">
-            <div class="module-icon">🌐</div>
-            <h2 class="module-title">Графики ИЭЭ</h2>
+            <div class="module-icon">📈</div>
+            <h2 class="module-title">Индикаторы энергоэффективности установки, объекта</h2>
             <p class="module-description">Динамика удельных расходов, выработки пара и потребления сырья для установок 5‑8.</p>
             <div class="module-features">
-                <span class="feature-tag">Удельные</span>
-                <span class="feature-tag">Выработка</span>
+                <span class="feature-tag">Индикаторы</span>
+                <span class="feature-tag">Энергоэффективность</span>
                 <span class="feature-tag">Сырьё</span>
             </div>
-            <a href="{% url 'src:graphs_iee' %}" class="module-button">
+            <a href="{% url 'src:indicators' %}" class="module-button">
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
@@ -47,15 +47,15 @@
 
         <!-- Таблицы -->
         <div class="module-card">
-            <div class="module-icon">📋</div>
-            <h2 class="module-title">Таблицы</h2>
+            <div class="module-icon">📶</div>
+            <h2 class="module-title">Энергоемкость, индекс энергоемкости</h2>
             <p class="module-description">Детальные таблицы фактических и плановых данных по всем установкам и ресурсам.</p>
             <div class="module-features">
-                <span class="feature-tag">Факт</span>
-                <span class="feature-tag">План</span>
+                <span class="feature-tag">Энергоемкость</span>
+                <span class="feature-tag">Индекс</span>
                 <span class="feature-tag">Отклонения</span>
             </div>
-            <a href="{% url 'src:tables' %}" class="module-button">
+            <a href="{% url 'src:intensity' %}" class="module-button">
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
@@ -64,14 +64,14 @@
         <!-- Сводные данные -->
         <div class="module-card">
             <div class="module-icon">📊</div>
-            <h2 class="module-title">Сводные данные</h2>
+            <h2 class="module-title">Потребление и выработка ТЭР, план/факт</h2>
             <p class="module-description">Сводная таблица по всем показателям с возможностью экспорта в Excel.</p>
             <div class="module-features">
                 <span class="feature-tag">Сводка</span>
                 <span class="feature-tag">Экспорт</span>
                 <span class="feature-tag">Все периоды</span>
             </div>
-            <a href="{% url 'src:tables_svod' %}" class="module-button">
+            <a href="{% url 'src:plan_fact' %}" class="module-button">
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Статистика -->
-        <div class="module-card">
+        <!-- <div class="module-card">
             <div class="module-icon">✅</div>
             <h2 class="module-title">Статистика</h2>
             <p class="module-description">Статистические показатели: минимумы, максимумы, средние, дисперсия по периодам.</p>
@@ -107,10 +107,10 @@
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
-        </div>
+        </div> -->
 
         <!-- НОВЫЙ МОДУЛЬ: План/факт -->
-        <div class="module-card">
+        <!-- <div class="module-card">
             <div class="module-icon">📈</div>
             <h2 class="module-title">План/факт</h2>
             <p class="module-description">Сравнение плановых и фактических показателей по сырью, электроэнергии, теплоэнергии и газу.</p>
@@ -123,7 +123,7 @@
                 Перейти
                 <span class="button-arrow">→</span>
             </a>
-        </div>
+        </div> -->
 
 
             <!-- НОВЫЙ МОДУЛЬ: Факт/план -->
