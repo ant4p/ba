@@ -1,0 +1,200 @@
+<!-- ==================== energy_saving_potential.html ==================== -->
+{% extends 'base.html' %}
+
+{% block title %}Потенциал энергосбережения ТЭР{% endblock %}
+
+{% block content %}
+<div class="graph-container">
+    <!-- Заголовок страницы -->
+    <div class="page-header">
+        <h1 class="page-title">Потенциал энергосбережения ТЭР</h1>
+        <p class="page-subtitle">Суммарный потенциал на 2026 год по установкам Общества</p>
+    </div>
+
+    <!-- Сводные данные (карточки) -->
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="card-label">Электрическая энергия</div>
+            <div class="card-value">1 618,0 <span class="card-unit">МВт·ч</span></div>
+            <div class="card-percent">5,39%</div>
+        </div>
+        <div class="summary-card">
+            <div class="card-label">Пар (потребление)</div>
+            <div class="card-value">6 980,4 <span class="card-unit">Гкал</span></div>
+            <div class="card-percent">3,93%</div>
+        </div>
+        <div class="summary-card">
+            <div class="card-label">Пар (выработка)</div>
+            <div class="card-value">9 381,1 <span class="card-unit">Гкал</span></div>
+            <div class="card-percent">2,91%</div>
+        </div>
+        <div class="summary-card">
+            <div class="card-label">Газообразное топливо</div>
+            <div class="card-value">5 610,6 <span class="card-unit">т</span></div>
+            <div class="card-percent">5,92%</div>
+        </div>
+        <div class="summary-card">
+            <div class="card-label">Жидкое топливо</div>
+            <div class="card-value">410,0 <span class="card-unit">т</span></div>
+            <div class="card-percent">1,28%</div>
+        </div>
+        <div class="summary-card highlight">
+            <div class="card-label">Всего ТЭР</div>
+            <div class="card-value">292 681,5 <span class="card-unit">ГДж</span></div>
+            <div class="card-percent">5,14%</div>
+        </div>
+    </div>
+
+    <!-- Таблица 1: Абсолютные значения -->
+    <h3 class="section-title">Потенциал энергосбережения ТЭР в абсолютных величинах</h3>
+    <div class="table-wrapper" style="margin-bottom: 2rem;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>№ п/п</th>
+                    <th>Установка</th>
+                    <th>Электрическая энергия, МВт·ч</th>
+                    <th>Пар (потребление), Гкал</th>
+                    <th>Пар (выработка), Гкал</th>
+                    <th>Газообразное топливо, т</th>
+                    <th>Жидкое топливо, т</th>
+                    <th>Всего по ТЭР, ГДж</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Установка-1</td><td>184,3</td><td>785,8</td><td>0,0</td><td>0,0</td><td>0,0</td><td>5 151,3</td></tr>
+                <tr><td>2</td><td>Установка-2</td><td>360,5</td><td>941,4</td><td>391,4</td><td>2 276,1</td><td>0,0</td><td>104 782,7</td></tr>
+                <tr><td>3</td><td>Установка-3</td><td>735,7</td><td>5 253,2</td><td>8 989,7</td><td>1 824,6</td><td>0,0</td><td>105 669,0</td></tr>
+                <tr><td>4</td><td>Установка-4</td><td>337,5</td><td>0,0</td><td>0,0</td><td>1 509,9</td><td>410,0</td><td>77 078,5</td></tr>
+                <tr class="total-row"><td></td><td><strong>Итого</strong></td><td><strong>1 618,0</strong></td><td><strong>6 980,4</strong></td><td><strong>9 381,1</strong></td><td><strong>5 610,6</strong></td><td><strong>410,0</strong></td><td><strong>292 681,5</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Таблица 2: Проценты -->
+    <h3 class="section-title">Потенциал энергосбережения ТЭР в %</h3>
+    <div class="table-wrapper" style="margin-bottom: 2rem;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>№ п/п</th>
+                    <th>Установка</th>
+                    <th>Электрическая энергия, %</th>
+                    <th>Пар (потребление), %</th>
+                    <th>Пар (выработка), %</th>
+                    <th>Газообразное топливо, %</th>
+                    <th>Жидкое топливо, %</th>
+                    <th>Всего по ТЭР, %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Установка-1</td><td>2,93</td><td>11,89</td><td>0,00</td><td>0,00</td><td>0,00</td><td>5,65</td></tr>
+                <tr><td>2</td><td>Установка-2</td><td>0,98</td><td>2,43</td><td>0,81</td><td>4,80</td><td>0,00</td><td>1,42</td></tr>
+                <tr><td>3</td><td>Установка-3</td><td>1,61</td><td>13,29</td><td>10,25</td><td>2,33</td><td>0,00</td><td>4,69</td></tr>
+                <tr><td>4</td><td>Установка-4</td><td>2,81</td><td>0,00</td><td>0,00</td><td>11,11</td><td>5,39</td><td>2,81</td></tr>
+                <tr class="total-row"><td></td><td><strong>Итого</strong></td><td><strong>5,39</strong></td><td><strong>3,93</strong></td><td><strong>2,91</strong></td><td><strong>5,92</strong></td><td><strong>1,28</strong></td><td><strong>5,14</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Стили для сводных карточек */
+    .summary-cards {
+        display: flex;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0 2.5rem;
+        
+    }
+    .summary-card {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 20px;
+        padding: 1.2rem 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        transition: border-color 0.2s;
+    }
+    .summary-card:hover {
+        border-color: #b9dcf2;
+    }
+    .summary-card.highlight {
+        border-color: #7fc1e5;
+        background-color: #f8fcff;
+    }
+    .card-label {
+        font-size: 0.9rem;
+        color: #4a5a6e;
+        margin-bottom: 0.3rem;
+    }
+    .card-value {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #0f2637;
+        line-height: 1.2;
+    }
+    .card-unit {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: #4a5a6e;
+    }
+    .card-percent {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #0369a1;
+        margin-top: 0.2rem;
+    }
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 1.5rem 0 1rem;
+        color: #0f2637;
+    }
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 1px solid #e9ecef;
+        background: white;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        background: white;
+        
+    }
+    .data-table th, .data-table td {
+        padding: 0.6rem 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        text-align: center;  /* центрируем все ячейки */
+        font-weight: 400;
+    }
+    .data-table th {
+        background-color: #f9fafc;
+        font-weight: 500;
+        border-bottom: 2px solid #e0f2fe;
+    }
+    .data-table .total-row td {
+        background-color: #f0f9ff;
+        font-weight: 600;
+        border-top: 2px solid #b9dcf2;
+    }
+    @media (max-width: 768px) {
+        .summary-cards {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            display: grid;
+        }
+        .card-value {
+            font-size: 1.3rem;
+        }
+    }
+    @media (max-width: 480px) {
+        .summary-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

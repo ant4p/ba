@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогресс: субъекты РФ и БД | компактные блоки</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 520px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* компактный блок, как "Сводка по статусам" */
+        .compact-stats {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2edf7;
+            overflow: hidden;
+        }
+
+        .compact-header {
+            padding: 1rem 1.2rem 0.5rem 1.2rem;
+            border-bottom: 1px solid #eef3fc;
+        }
+        .compact-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1c6e9e;
+            letter-spacing: -0.2px;
+        }
+        .compact-header p {
+            font-size: 0.7rem;
+            color: #6f8faa;
+            margin-top: 4px;
+        }
+
+        .region-list {
+            padding: 0.8rem 1.2rem 1.2rem 1.2rem;
+        }
+
+        .region-item {
+            margin-bottom: 1rem;
+        }
+        .region-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .region-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+        }
+        .region-name {
+            font-weight: 600;
+            color: #2c6b9b;
+            background: #f0f7fe;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        .region-values {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #3c7aa6;
+        }
+        .percent {
+            font-weight: 700;
+            color: #0f5b87;
+            margin-left: 6px;
+        }
+
+        /* прогресс-бар */
+        .progress-bar-bg {
+            background-color: #e2edf9;
+            border-radius: 20px;
+            height: 18px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #3c91c9, #6bb5e0);
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 6px;
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+        /* разные оттенки синего для лёгкого разнообразия */
+        .fill-1 { background: linear-gradient(90deg, #2c7cb6, #5aa9dd); }
+        .fill-2 { background: linear-gradient(90deg, #3f8ec2, #74b9e8); }
+        .fill-3 { background: linear-gradient(90deg, #2880b3, #5fb0de); }
+        .fill-4 { background: linear-gradient(90deg, #1f6e9e, #54a4d4); }
+        .fill-5 { background: linear-gradient(90deg, #357eb0, #69b1e2); }
+
+        .compact-footer {
+            padding: 0.6rem 1.2rem 1rem 1.2rem;
+            border-top: 1px solid #eef3fc;
+            font-size: 0.6rem;
+            color: #7c9abc;
+            text-align: center;
+        }
+
+        /* сводный прогресс-бар в первом модуле */
+        .summary-bar {
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #d4e2f0;
+        }
+        .summary-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1c6e9e;
+            margin-bottom: 6px;
+        }
+        .summary-progress {
+            background-color: #e2edf9;
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+        }
+        .summary-fill {
+            background: linear-gradient(90deg, #1f6390, #4f9fcf);
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 550px) {
+            .dashboard {
+                max-width: 100%;
+            }
+            .region-row {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <!-- ПЕРВЫЙ МОДУЛЬ: Субъекты РФ + сводный прогресс -->
+    <div class="compact-stats">
+        <div class="compact-header">
+            <h3>Субъекты РФ · выполнение</h3>
+            <p>план / факт · прогресс</p>
+        </div>
+        <div class="region-list">
+            <!-- 1. 12/100 = 12% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">Республика Адыгея</span>
+                    <span class="region-values">12 / 100 <span class="percent">12%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-1" style="width: 12%;">12%</div>
+                </div>
+            </div>
+            <!-- 2. 24/115 = 21,42% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">Республика Татарстан</span>
+                    <span class="region-values">24 / 115 <span class="percent">21,42%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-2" style="width: 21.42%;">21,4%</div>
+                </div>
+            </div>
+            <!-- 3. 15/85 = 17,64% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">Краснодарский край</span>
+                    <span class="region-values">15 / 85 <span class="percent">17,64%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-3" style="width: 17.64%;">17,6%</div>
+                </div>
+            </div>
+            <!-- 4. 24/110 = 21,82% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">Свердловская область</span>
+                    <span class="region-values">24 / 110 <span class="percent">21,82%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-4" style="width: 21.82%;">21,8%</div>
+                </div>
+            </div>
+            <!-- 5. 18/150 = 12% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">Приморский край</span>
+                    <span class="region-values">18 / 150 <span class="percent">12%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-5" style="width: 12%;">12%</div>
+                </div>
+            </div>
+
+            <!-- Сводный прогресс-бар -->
+            <div class="summary-bar">
+                <div class="summary-title">Сводный прогресс выполнения плана</div>
+                <div class="summary-progress">
+                    <div class="summary-fill" style="width: 16.61%;">16,6%</div>
+                </div>
+                <div style="font-size: 0.65rem; text-align: right; margin-top: 4px; color: #5d8bb0;">
+                    сумма выполнено: 93 / сумма планов: 560
+                </div>
+            </div>
+        </div>
+        <div class="compact-footer">
+            расчёт: выполнено / план × 100%
+        </div>
+    </div>
+
+    <!-- ВТОРОЙ МОДУЛЬ: БД (значения ×7) без сводного бара -->
+    <div class="compact-stats">
+        <div class="compact-header">
+            <h3>Базы данных · выполнение</h3>
+            <p>план / факт · прогресс (значения увеличены в 7 раз)</p>
+        </div>
+        <div class="region-list">
+            <!-- БД ПИ: 84/700 = 12% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">БД ПИ</span>
+                    <span class="region-values">84 / 700 <span class="percent">12%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-1" style="width: 12%;">12%</div>
+                </div>
+            </div>
+            <!-- БД ППЭР: 168/805 = 21,42% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">БД ППЭР</span>
+                    <span class="region-values">168 / 805 <span class="percent">21,42%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-2" style="width: 21.42%;">21,4%</div>
+                </div>
+            </div>
+            <!-- БД ИКЭР: 105/595 = 17,64% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">БД ИКЭР</span>
+                    <span class="region-values">105 / 595 <span class="percent">17,64%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-3" style="width: 17.64%;">17,6%</div>
+                </div>
+            </div>
+            <!-- БД ТПЭ: 168/770 = 21,82% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">БД ТПЭ</span>
+                    <span class="region-values">168 / 770 <span class="percent">21,82%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-4" style="width: 21.82%;">21,8%</div>
+                </div>
+            </div>
+            <!-- БД ЭР: 126/1050 = 12% -->
+            <div class="region-item">
+                <div class="region-row">
+                    <span class="region-name">БД ЭР</span>
+                    <span class="region-values">126 / 1050 <span class="percent">12%</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill fill-5" style="width: 12%;">12%</div>
+                </div>
+            </div>
+        </div>
+        <div class="compact-footer">
+            значения ×7 относительно субъектов РФ
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -219,12 +219,14 @@ body {
 
 /* ===== СТИЛИ ДЛЯ ПУНКТОВ МЕНЮ ===== */
 .logo {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 500;
     letter-spacing: -0.02em;
     color: #1e2b3c;
     padding-bottom: 1rem;
     border-bottom: 2px solid #e0f2fe;
+    display:flex;
+    
 }
 
 .nav-menu {

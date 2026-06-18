@@ -9,8 +9,8 @@ class ShowAnalytics(TemplateView):
     template_name = "src/analytics.html"
 
 
-class ShowGraphs(TemplateView):
-    template_name = "src/graphs.html"
+class ShowPotentialES(TemplateView):
+    template_name = "src/potential_es.html"
 
 
 class ShowNets(TemplateView):

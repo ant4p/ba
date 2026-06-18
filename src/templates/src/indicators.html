@@ -1,219 +1,580 @@
-<!-- ==================== graphs.html ==================== -->
+<!-- ==================== unit_analysis.html ==================== -->
 {% extends 'base.html' %}
 
-{% block title %}Индикаторы энергоэффективности установки, объекта{% endblock %}
+{% block title %}Анализ установки{% endblock %}
 
 {% block content %}
 <div class="graph-container">
     <!-- Заголовок страницы -->
     <div class="page-header">
-        <h1 class="page-title">Индикаторы энергоэффективности установки, объекта</h1>
-        <p class="page-subtitle">Удельный расход электроэнергии (кВт·ч/т) в зависимости от производительности</p>
+        <h1 class="page-title">Анализ работы установки</h1>
+        <p class="page-subtitle">Удельные нормы и эффективность использования ТЭР</p>
     </div>
 
-    <!-- Сетка графиков -->
-    <div class="graphs-grid">
-        <!-- Установка 1 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 1</h2>
-            <canvas id="chartUnit1" width="800" height="400"></canvas>
+    <!-- Панель фильтров -->
+    <div class="filters-panel" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+        <div class="filter-group">
+            <label>Установка:</label>
+            <select id="unitSelect" class="filter-select">
+                <option value="1">Установка 1 (ЭЛОУ-1)</option>
+                <option value="2">Установка 2 (ЭЛОУ-АТ-4)</option>
+                <option value="3">Установка 3 (АВТ-3)</option>
+                <option value="4">Установка 4 (ВТ-3)</option>
+                <option value="5">Установка 5 (АВТ-4)</option>
+                <option value="6">Установка 6 (ВТ-6)</option>
+                <option value="7">Установка 7 (ВИСБРЕКИНГ)</option>
+                <option value="8">Установка 8 (БИТУМНАЯ)</option>
+                <option value="9">Установка 9 (Л-35/11)</option>
+                <option value="10">Установка 10 (ЛГ-35/11)</option>
+                <option value="11">Установка 11 (РИФОРМИНГ)</option>
+                <option value="12">Установка 12 (ЭКСТРАКЦИЯ)</option>
+                <option value="13">Установка 13 (1А-1М)</option>
+                <option value="14">Установка 14 (КР-600)</option>
+                <option value="15">Установка 15 (ГО КР-600)</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Анализируемый месяц:</label>
+            <select id="monthSelect" class="filter-select">
+                <option value="1">Январь</option>
+                <option value="2">Февраль</option>
+                <option value="3">Март</option>
+                <option value="4">Апрель</option>
+                <option value="5">Май</option>
+                <option value="6">Июнь</option>
+                <option value="7">Июль</option>
+                <option value="8">Август</option>
+                <option value="9">Сентябрь</option>
+                <option value="10">Октябрь</option>
+                <option value="11">Ноябрь</option>
+                <option value="12">Декабрь</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Год:</label>
+            <select id="yearSelect" class="filter-select">
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="tabs-container">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="norms">Удельные нормы по сезонам</button>
+            <button class="tab-btn" data-tab="efficiency">Эффективность использования ТЭР</button>
         </div>
 
-        <!-- Установка 2 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 2</h2>
-            <canvas id="chartUnit2" width="800" height="400"></canvas>
+        <!-- Вкладка 1: Удельные нормы -->
+        <div id="norms-tab" class="tab-content active">
+            <!-- Таблица 1 - Удельные нормы по ЭБЛ и ИЭЭ -->
+            <h3 class="section-title">Удельные нормы: по ЭБЛ и по прогнозу для ИЭЭ</h3>
+            <div class="table-wrapper" style="margin-bottom: 2rem;">
+                <table class="data-table" id="normsTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-align: center;">Период</th>
+                            <th rowspan="2" style="text-align: center;">Вид ТЭР</th>
+                            <th colspan="15">Производительность, т/ч</th>
+                        </tr>
+                        <tr id="prodHeaders"></tr>
+                    </thead>
+                    <tbody id="normsBody">
+                        <!-- заполняется JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Графики (столбчатые) – 4 графика в 2 строки -->
+            <div class="graphs-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="graph-card">
+                    <h2 class="graph-title">УР электроэнергии (ЭБЛ)</h2>
+                    <canvas id="chartElecEBL"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h2 class="graph-title">УР пара (потребление) (ЭБЛ)</h2>
+                    <canvas id="chartSteamEBL"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h2 class="graph-title">ИЭЭ: электроэнергия</h2>
+                    <canvas id="chartElecIEE"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h2 class="graph-title">ИЭЭ: пар (потребление)</h2>
+                    <canvas id="chartSteamIEE"></canvas>
+                </div>
+            </div>
         </div>
 
-        <!-- Установка 3 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 3</h2>
-            <canvas id="chartUnit3" width="800" height="400"></canvas>
-        </div>
+        <!-- Вкладка 2: Эффективность -->
+        <div id="efficiency-tab" class="tab-content">
+            <!-- Таблица 3 - Сравнение фактических УР с утвержденными нормами -->
+            <h3 class="section-title">Сравнение фактических УР и утвержденных норм</h3>
+            <div class="table-wrapper" style="margin-bottom: 2rem;">
+                <table class="data-table" id="comparisonTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Месяц</th>
+                            <th rowspan="2">Часы</th>
+                            <th rowspan="2">Объем производства, т</th>
+                            <th colspan="3">Удельный расход (факт)</th>
+                            <th colspan="3">Утвержденные нормы</th>
+                            <th colspan="3">Отклонения, %</th>
+                        </tr>
+                        <tr>
+                            <th>Эл.эн.</th><th>Пар (потр.)</th><th>Пар (выр.)</th>
+                            <th>Эл.эн.</th><th>Пар (потр.)</th><th>Пар (выр.)</th>
+                            <th>Эл.эн.</th><th>Пар (потр.)</th><th>Пар (выр.)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonBody"></tbody>
+                </table>
+            </div>
 
-        <!-- Установка 4 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 4</h2>
-            <canvas id="chartUnit4" width="800" height="400"></canvas>
-        </div>
+            <!-- Графики отклонений (2 в строке) -->
+            <div class="graphs-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="graph-card">
+                    <h2 class="graph-title">Отклонения УР электроэнергии от норм</h2>
+                    <canvas id="chartDeviationElec"></canvas>
+                </div>
+                <div class="graph-card">
+                    <h2 class="graph-title">Отклонения УР пара (потребление) от норм</h2>
+                    <canvas id="chartDeviationSteamCons"></canvas>
+                </div>
+            </div>
 
-        <!-- Установка 5 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 5</h2>
-            <canvas id="chartUnit5" width="800" height="400"></canvas>
-        </div>
-
-        <!-- Установка 6 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 6</h2>
-            <canvas id="chartUnit6" width="800" height="400"></canvas>
-        </div>
-
-        <!-- Установка 7 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 7</h2>
-            <canvas id="chartUnit7" width="800" height="400"></canvas>
-        </div>
-
-        <!-- Установка 8 -->
-        <div class="graph-card">
-            <h2 class="graph-title">Установка 8</h2>
-            <canvas id="chartUnit8" width="800" height="400"></canvas>
+            <!-- График коэффициента энергоэффективности -->
+            <div class="graph-card" style="height: 450px; margin-top: 2rem;">
+                <h2 class="graph-title">Коэффициент энергоэффективности (ТЭ)</h2>
+                <canvas id="chartEfficiency"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Подключение Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Данные для установки 1 (уже были)
-        const unit1_prod = [624.0, 632.8, 641.6, 650.4, 659.2, 667.9, 676.7, 685.5];
-        const unit1_winter = [1.154, 1.155, 1.157, 1.158, 1.160, 1.161, 1.162, 1.164];
-        const unit1_summer = [1.464, 1.413, 1.362, 1.313, 1.266, 1.219, 1.174, 1.130];
 
-        createChart('chartUnit1', unit1_prod, unit1_winter, unit1_summer, 'Установка 1');
+        // === ДАННЫЕ ДЛЯ ТАБЛИЦЫ 1 (15 значений производительности и удельные нормы) ===
+        const prodValues = [571.29, 579.97, 588.64, 597.32, 605.99, 614.67, 623.34, 632.02, 640.69, 649.37, 658.05, 666.72, 675.40, 684.07, 692.75];
 
-        // Установка 2
-        const unit2_prod = [508.6, 509.9, 511.1, 512.3, 513.6, 514.8, 516.1, 517.3, 518.6, 519.8, 521.1, 522.3, 523.6, 524.8, 526.1];
-        const unit2_winter = [8.542, 8.551, 8.561, 8.570, 8.579, 8.589, 8.598, 8.607, 8.616, 8.626, 8.635, null, null, null, null];
-        const unit2_summer = [null, null, null, null, null, 9.024, 8.988, 8.952, 8.917, 8.881, 8.846, 8.811, 8.776, 8.741, 8.707];
+        // ЭБЛ (энергетическая базовая линия) – данные из таблицы с заполнением последнего пропуска
+        // Зимний сезон, Электроэнергия (кВт*ч/т) – значения из строки "Зимний сезон"
+        const elecWinterEBL = [
+            null, null, null, null, null, null, 1.1546, 1.1589, 1.1632, 1.1673, 1.1712, 1.1751, 1.1789, 1.1826, 1.1826
+        ];
+        // Летний сезон, Электроэнергия (кВт*ч/т) – все значения есть
+        const elecSummerEBL = [
+            1.8140, 1.7512, 1.6902, 1.6310, 1.5736, 1.5177, 1.4634, 1.4105, 1.3591, 1.3091, 1.2604, 1.2130, 1.1668, 1.1217, 1.0778
+        ];
 
-        createChart('chartUnit2', unit2_prod, unit2_winter, unit2_summer, 'Установка 2');
+        // Пар потребление (тыс.ккал/т) – зимний и летний
+        const steamConsWinterEBL = [
+            null, null, null, null, null, null, 1.3900, 1.4334, 1.4757, 1.5169, 1.5569, 1.5960, 1.6340, 1.6711, 1.6711
+        ];
+        const steamConsSummerEBL = [
+            0.9603, 0.9710, 0.9814, 0.9915, 1.0014, 1.0109, 1.0202, 1.0292, 1.0380, 1.0465, 1.0548, 1.0629, 1.0708, 1.0785, 1.0860
+        ];
 
-        // Установка 3
-        const unit3_prod = [563.8, 573.2, 582.6, 592.0, 601.4, 610.8, 620.2, 629.5, 638.9, 648.3, 657.7, 667.1, 676.5, 685.9, 695.3];
-        const unit3_winter = [null, null, null, null, null, null, null, 8.744, 8.669, 8.596, 8.525, 8.456, 8.388, 8.323, null];
-        const unit3_summer = [9.971, 9.825, 9.683, 9.546, 9.413, 9.285, 9.160, 9.038, 8.921, 8.807, 8.696, 8.588, 8.483, 8.381, 8.282];
+        // ИЭЭ (прогноз) – зимний и летний для электроэнергии
+        const elecWinterIEE = [
+            null, null, null, null, null, null, 1.1543, 1.1566, 1.1589, 1.1610, 1.1632, 1.1652, 1.1672, 1.1692, 1.1692
+        ];
+        const elecSummerIEE = [
+            1.7872, 1.7256, 1.6657, 1.6077, 1.5512, 1.4964, 1.4431, 1.3913, 1.3408, 1.2917, 1.2439, 1.1974, 1.1520, 1.1078, 1.0647
+        ];
 
-        createChart('chartUnit3', unit3_prod, unit3_winter, unit3_summer, 'Установка 3');
+        // ИЭЭ для пара потребление
+        const steamConsWinterIEE = [
+            null, null, null, null, null, null, 1.3995, 1.4257, 1.4512, 1.4761, 1.5003, 1.5238, 1.5468, 1.5691, 1.5691
+        ];
+        const steamConsSummerIEE = [
+            0.9459, 0.9567, 0.9672, 0.9774, 0.9872, 0.9968, 1.0062, 1.0153, 1.0241, 1.0327, 1.0411, 1.0493, 1.0572, 1.0649, 1.0725
+        ];
 
-        // Установка 4
-        const unit4_prod = [145.1, 249.7, 354.4, 459.0, 563.7, 668.3, 772.9, 877.6, 982.2, 1086.8, 1191.5, 1296.1, 1400.8, 1505.4, 1610.0];
-        const unit4_winter = [null, 8.302, null, null, null, null, null, null, null, null, null, null, null, null, null];
-        const unit4_summer = [7.930, 6.770, 6.296, 6.037, 5.875, 5.763, 5.682, 5.620, 5.571, 5.532, 5.500, 5.472, 5.449, 5.429, 5.412];
+        // Для других установок (если не 1) генерируем случайные данные (заглушки)
+        function getUnitData(unit) {
+            if (unit == 1) {
+                return {
+                    prod: prodValues,
+                    elec: { winterEBL: elecWinterEBL, summerEBL: elecSummerEBL, winterIEE: elecWinterIEE, summerIEE: elecSummerIEE },
+                    steamCons: { winterEBL: steamConsWinterEBL, summerEBL: steamConsSummerEBL, winterIEE: steamConsWinterIEE, summerIEE: steamConsSummerIEE }
+                };
+            } else {
+                // Заглушки для других установок – генерируем все 15 точек
+                let prod = prodValues.map(p => p + (unit-1)*2);
+                let elecWinterEBL = prod.map(p => 1.2 + 0.005*p + Math.random()*0.2);
+                let elecSummerEBL = prod.map(p => 0.9 + 0.006*p + Math.random()*0.2);
+                let elecWinterIEE = elecWinterEBL.map(v => v*0.98);
+                let elecSummerIEE = elecSummerEBL.map(v => v*0.98);
+                let steamConsWinterEBL = prod.map(p => 0.7 + 0.003*p + Math.random()*0.1);
+                let steamConsSummerEBL = prod.map(p => 0.6 + 0.004*p + Math.random()*0.1);
+                let steamConsWinterIEE = steamConsWinterEBL.map(v => v*0.96);
+                let steamConsSummerIEE = steamConsSummerEBL.map(v => v*0.96);
+                return {
+                    prod: prod,
+                    elec: { winterEBL: elecWinterEBL, summerEBL: elecSummerEBL, winterIEE: elecWinterIEE, summerIEE: elecSummerIEE },
+                    steamCons: { winterEBL: steamConsWinterEBL, summerEBL: steamConsSummerEBL, winterIEE: steamConsWinterIEE, summerIEE: steamConsSummerIEE }
+                };
+            }
+        }
 
-        createChart('chartUnit4', unit4_prod, unit4_winter, unit4_summer, 'Установка 4');
+        // === Заполнение таблицы 1 ===
+        function fillNormsTable() {
+            const unit = parseInt(document.getElementById('unitSelect').value);
+            const data = getUnitData(unit);
+            const prod = data.prod;
+            const thead = document.getElementById('prodHeaders');
+            thead.innerHTML = prod.map(p => `<th>${p.toFixed(2)}</th>`).join('');
 
-        // Установка 5
-        const unit5_prod = [400.3, 424.8, 449.4, 473.9, 498.5, 523.0, 547.6, 572.1, 596.7, 621.2, 645.8, 670.3, 694.9, 719.4, 744.0];
-        const unit5_winter = [null, null, null, null, null, null, null, null, null, 7.843, null, null, null, null, null];
-        const unit5_summer = [13.901, 12.738, 11.702, 10.774, 9.936, 9.178, 8.487, 7.856, 7.277, 6.743, 6.250, 5.793, 5.369, 4.973, 4.604];
-
-        createChart('chartUnit5', unit5_prod, unit5_winter, unit5_summer, 'Установка 5');
-
-        // Установка 6
-        const unit6_prod = [490.4, 503.3, 516.3, 529.2, 542.1, 555.0, 567.9, 580.9, 593.8, 606.7, 619.6, 632.6, 645.5, 658.4, 671.3];
-        const unit6_winter = [6.122, 6.108, 6.094, 6.081, 6.069, 6.057, 6.046, 6.035, 6.024, null, null, null, null, null, null];
-        const unit6_summer = [null, null, 8.689, 8.272, 7.875, 7.496, 7.135, 6.790, 6.459, 6.143, 5.840, 5.550, 5.271, 5.003, 4.745];
-
-        createChart('chartUnit6', unit6_prod, unit6_winter, unit6_summer, 'Установка 6');
-
-        // Установка 7
-        const unit7_prod = [117.6, 136.6, 155.6, 174.6, 193.6, 212.6, 231.6, 250.6, 269.5, 288.5, 307.5, 326.5, 345.5, 364.5, 383.5];
-        const unit7_winter = [null, null, 4.814, 4.376, 4.024, 3.735, 3.493, 3.288, 3.112, 2.959, 2.825, 2.707, 2.601, 2.507, 2.422];
-        const unit7_summer = [11.041, 8.809, 7.123, 5.803, 4.742, null, null, null, null, null, null, null, null, null, null];
-
-        createChart('chartUnit7', unit7_prod, unit7_winter, unit7_summer, 'Установка 7');
-
-        // Установка 8
-        const unit8_prod = [672.0, 677.1, 682.3, 687.4, 692.6, 697.7, 702.9, 708.0, 713.1, 718.3, 723.4, 728.6, 733.7, 738.9, 744.0];
-        const unit8_winter = [1.585, 1.559, 1.534, 1.510, 1.485, 1.461, 1.438, 1.414, 1.392, 1.369, 1.347, 1.325, 1.303, 1.282, 1.261];
-        const unit8_summer = [null, null, null, null, null, null, null, null, null, null, 1.414, 1.383, 1.353, 1.323, 1.293];
-
-        createChart('chartUnit8', unit8_prod, unit8_winter, unit8_summer, 'Установка 8');
-
-        // Общая функция создания графика
-        function createChart(canvasId, prod, winter, summer, unitLabel) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: prod.map(p => p.toFixed(1) + ' т/ч'),
-                    datasets: [
-                        {
-                            label: 'Зимний сезон (кВт·ч/т)',
-                            data: winter,
-                            borderColor: '#7fc1e5',
-                            backgroundColor: 'rgba(127, 193, 229, 0.1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#7fc1e5',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            tension: 0.2,
-                            spanGaps: false
-                        },
-                        {
-                            label: 'Летний сезон (кВт·ч/т)',
-                            data: summer,
-                            borderColor: '#cbd5e1',
-                            backgroundColor: 'rgba(203, 213, 225, 0.1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#cbd5e1',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            tension: 0.2,
-                            spanGaps: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#1e2b3c',
-                                font: {
-                                    family: 'Inter, sans-serif',
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#ffffff',
-                            titleColor: '#0f2637',
-                            bodyColor: '#4a5a6e',
-                            borderColor: '#e9ecef',
-                            borderWidth: 1,
-                            padding: 10
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: '#e9ecef' },
-                            ticks: {
-                                color: '#4a5a6e',
-                                font: { family: 'Inter, sans-serif' },
-                                maxRotation: 45,
-                                minRotation: 45
-                            }
-                        },
-                        y: {
-                            grid: { color: '#e9ecef' },
-                            ticks: {
-                                color: '#4a5a6e',
-                                font: { family: 'Inter, sans-serif' },
-                                callback: (value) => value.toFixed(2) + ' кВт·ч/т'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Удельный расход электроэнергии',
-                                color: '#1e2b3c',
-                                font: { family: 'Inter, sans-serif', size: 12, weight: '500' }
-                            }
-                        }
-                    },
-                    layout: { padding: { top: 20, bottom: 20 } }
-                }
+            const tbody = document.getElementById('normsBody');
+            tbody.innerHTML = '';
+            const rows = [
+                { label: 'Электроэнергия (кВт*ч/т)', sub: 'Зимний сезон', values: data.elec.winterEBL },
+                { label: 'Электроэнергия (кВт*ч/т)', sub: 'Летний сезон', values: data.elec.summerEBL },
+                { label: 'Пар потребление (тыс.ккал/т)', sub: 'Зимний сезон', values: data.steamCons.winterEBL },
+                { label: 'Пар потребление (тыс.ккал/т)', sub: 'Летний сезон', values: data.steamCons.summerEBL },
+                { label: 'Электроэнергия (кВт*ч/т) – ИЭЭ', sub: 'Зимний сезон', values: data.elec.winterIEE },
+                { label: 'Электроэнергия (кВт*ч/т) – ИЭЭ', sub: 'Летний сезон', values: data.elec.summerIEE },
+                { label: 'Пар потребление (тыс.ккал/т) – ИЭЭ', sub: 'Зимний сезон', values: data.steamCons.winterIEE },
+                { label: 'Пар потребление (тыс.ккал/т) – ИЭЭ', sub: 'Летний сезон', values: data.steamCons.summerIEE }
+            ];
+            rows.forEach(row => {
+                if (!row.values || row.values.length === 0) return;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td style="text-align: center;">${row.sub}</td><td style="text-align: center;">${row.label}</td>` + row.values.map(v => `<td>${v !== null ? v.toFixed(3) : '-'}</td>`).join('');
+                tbody.appendChild(tr);
             });
         }
+
+        // === Построение столбчатых графиков (4 графика) ===
+        function buildBarCharts() {
+            const unit = parseInt(document.getElementById('unitSelect').value);
+            const data = getUnitData(unit);
+            const prod = data.prod;
+
+            function createChart(canvasId, datasets, yLabel, colors) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                const validDatasets = datasets.filter(ds => ds.data.some(v => v !== null));
+                if (validDatasets.length === 0) {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: { labels: prod.map(p => p.toFixed(1)), datasets: [{ label: 'Нет данных', data: [], backgroundColor: '#ccc' }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                    return;
+                }
+                const colorPalette = colors || ['rgba(127,193,229,0.6)', 'rgba(203,213,225,0.6)', 'rgba(251,191,36,0.6)', 'rgba(148,163,184,0.6)'];
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: prod.map(p => p.toFixed(1) + ' т/ч'),
+                        datasets: validDatasets.map((ds, idx) => ({
+                            label: ds.label,
+                            data: ds.data.map(v => v !== null ? v : 0),
+                            backgroundColor: colorPalette[idx % colorPalette.length],
+                            borderColor: colorPalette[idx % colorPalette.length].replace('0.6', '1'),
+                            borderWidth: 1,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.7
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            y: { title: { display: true, text: yLabel } }
+                        }
+                    }
+                });
+            }
+
+            // 1. Электроэнергия – только ЭБЛ (зима, лето)
+            const elecEBL = [
+                { label: 'Зимний сезон (ЭБЛ)', data: data.elec.winterEBL },
+                { label: 'Летний сезон (ЭБЛ)', data: data.elec.summerEBL }
+            ];
+            createChart('chartElecEBL', elecEBL, 'кВт·ч/т', ['rgba(127,193,229,0.6)', 'rgba(203,213,225,0.6)']);
+
+            // 2. Пар потребление – только ЭБЛ (зима, лето)
+            const steamEBL = [
+                { label: 'Зимний сезон (ЭБЛ)', data: data.steamCons.winterEBL },
+                { label: 'Летний сезон (ЭБЛ)', data: data.steamCons.summerEBL }
+            ];
+            createChart('chartSteamEBL', steamEBL, 'тыс.ккал/т', ['rgba(127,193,229,0.6)', 'rgba(203,213,225,0.6)']);
+
+            // 3. ИЭЭ – электроэнергия (зима, лето)
+            const elecIEE = [
+                { label: 'Зимний ИЭЭ', data: data.elec.winterIEE },
+                { label: 'Летний ИЭЭ', data: data.elec.summerIEE }
+            ];
+            createChart('chartElecIEE', elecIEE, 'кВт·ч/т', ['rgba(251,191,36,0.6)', 'rgba(148,163,184,0.6)']);
+
+            // 4. ИЭЭ – пар потребление (зима, лето)
+            const steamIEE = [
+                { label: 'Зимний ИЭЭ', data: data.steamCons.winterIEE },
+                { label: 'Летний ИЭЭ', data: data.steamCons.summerIEE }
+            ];
+            createChart('chartSteamIEE', steamIEE, 'тыс.ккал/т', ['rgba(251,191,36,0.6)', 'rgba(148,163,184,0.6)']);
+        }
+
+        // === Таблица сравнения (заглушка) ===
+        function getComparisonData() {
+            const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+            const data = [];
+            for (let i = 0; i < 12; i++) {
+                const isWinter = i < 2 || i > 10;
+                let elecNorm = isWinter ? 1.2 : 0.9;
+                let steamConsNorm = isWinter ? 0.9 : 0.7;
+                let steamProdNorm = 0.5;
+                elecNorm += (Math.random() - 0.5) * 0.2;
+                steamConsNorm += (Math.random() - 0.5) * 0.1;
+                steamProdNorm += (Math.random() - 0.5) * 0.1;
+                let elecFact = elecNorm * (1 + (Math.random() - 0.5) * 0.1);
+                let steamConsFact = steamConsNorm * (1 + (Math.random() - 0.5) * 0.15);
+                let steamProdFact = steamProdNorm * (1 + (Math.random() - 0.5) * 0.12);
+                data.push({
+                    month: months[i],
+                    hours: Math.round(700 + Math.random() * 100),
+                    prod: Math.round(5000 + Math.random() * 2000),
+                    elecFact: elecFact.toFixed(3),
+                    steamConsFact: steamConsFact.toFixed(3),
+                    steamProdFact: steamProdFact.toFixed(3),
+                    elecNorm: elecNorm.toFixed(3),
+                    steamConsNorm: steamConsNorm.toFixed(3),
+                    steamProdNorm: steamProdNorm.toFixed(3),
+                    elecDev: ((elecFact - elecNorm) / elecNorm * 100).toFixed(1),
+                    steamConsDev: ((steamConsFact - steamConsNorm) / steamConsNorm * 100).toFixed(1),
+                    steamProdDev: ((steamProdFact - steamProdNorm) / steamProdNorm * 100).toFixed(1)
+                });
+            }
+            return data;
+        }
+
+        function fillComparisonTable() {
+            const data = getComparisonData();
+            const tbody = document.getElementById('comparisonBody');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${row.month}</td>
+                        <td>${row.hours}</td>
+                        <td>${row.prod}</td>
+                        <td>${row.elecFact}</td>
+                        <td>${row.steamConsFact}</td>
+                        <td>${row.steamProdFact}</td>
+                        <td>${row.elecNorm}</td>
+                        <td>${row.steamConsNorm}</td>
+                        <td>${row.steamProdNorm}</td>
+                        <td style="color: ${parseFloat(row.elecDev) < 0 ? '#10b981' : '#ef4444'}">${row.elecDev}</td>
+                        <td style="color: ${parseFloat(row.steamConsDev) < 0 ? '#10b981' : '#ef4444'}">${row.steamConsDev}</td>
+                        <td style="color: ${parseFloat(row.steamProdDev) < 0 ? '#10b981' : '#ef4444'}">${row.steamProdDev}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        // === Графики отклонений и эффективности (вторая вкладка) ===
+        function buildEfficiencyCharts() {
+            const data = getComparisonData();
+            const monthLabels = data.map(d => d.month);
+            const elecDevs = data.map(d => parseFloat(d.elecDev));
+            const steamConsDevs = data.map(d => parseFloat(d.steamConsDev));
+
+            function createBarChart(canvasId, values, color) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthLabels,
+                        datasets: [{ label: 'Отклонение, %', data: values, backgroundColor: values.map(v => v >= 0 ? '#ef4444' : '#10b981') }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
+            createBarChart('chartDeviationElec', elecDevs);
+            createBarChart('chartDeviationSteamCons', steamConsDevs);
+
+            // Коэффициент энергоэффективности
+            const ctxEff = document.getElementById('chartEfficiency').getContext('2d');
+            const effData = data.map((d, i) => {
+                let base = 80 + (i < 3 || i > 9 ? 5 : -5);
+                return base + (Math.random() - 0.5) * 10;
+            });
+            new Chart(ctxEff, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{ label: 'КЭЭ, %', data: effData, borderColor: '#7fc1e5', backgroundColor: 'rgba(127,193,229,0.1)', fill: true, tension: 0.2 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
+            });
+        }
+
+        // === Обновление всех компонентов ===
+        function updateAll() {
+            fillNormsTable();
+            fillComparisonTable();
+            // Пересоздаем графики
+            if (window.charts) {
+                window.charts.forEach(chart => chart.destroy());
+            }
+            window.charts = [];
+            buildBarCharts();
+            buildEfficiencyCharts();
+        }
+
+        // === Переключение вкладок ===
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${btn.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // === Подписка на фильтры ===
+        document.getElementById('unitSelect').addEventListener('change', updateAll);
+        document.getElementById('monthSelect').addEventListener('change', updateAll);
+        document.getElementById('yearSelect').addEventListener('change', updateAll);
+
+        // Инициализация
+        updateAll();
     });
 </script>
+
+<style>
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin: 1.5rem 0 1rem;
+        color: #0f2637;
+    }
+    .filters-panel {
+        background: #f9fafc;
+        padding: 1rem;
+        border-radius: 20px;
+        border: 1px solid #e9ecef;
+    }
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .filter-select {
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        background: white;
+        font-family: 'Inter', sans-serif;
+    }
+    .tabs-container {
+        margin-top: 2rem;
+    }
+    .tabs-header {
+        display: flex;
+        gap: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 2rem;
+    }
+    .tab-btn {
+        background: none;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #4a5a6e;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-radius: 8px 8px 0 0;
+    }
+    .tab-btn:hover {
+        background-color: #f8fcff;
+        color: #0369a1;
+    }
+    .tab-btn.active {
+        color: #0369a1;
+        border-bottom: 2px solid #7fc1e5;
+        background-color: #f0f9ff;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .table-wrapper {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 1px solid #e9ecef;
+        background: white;
+        margin-bottom: 1rem;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        background: white;
+    }
+    .data-table th, .data-table td {
+        padding: 0.6rem 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+        text-align: center;
+    }
+    .data-table th {
+        background-color: #f9fafc;
+        font-weight: 500;
+        border-bottom: 2px solid #e0f2fe;
+    }
+    .data-table td:first-child, .data-table th:first-child {
+        text-align: left;
+        font-weight: 500;
+    }
+    .graphs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .graph-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 24px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+    }
+    .graph-card:hover {
+        border-color: #b9dcf2;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
+    .graph-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #0f2637;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    @media (max-width: 768px) {
+        .graphs-grid {
+            grid-template-columns: 1fr;
+        }
+        .graph-card {
+            height: 350px;
+        }
+    }
+</style>
 {% endblock %}
