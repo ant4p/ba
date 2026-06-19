@@ -2,7 +2,7 @@
     <div class="logo">Энергоэффективность и планирование потребления ТЭР</div>
     
     <nav class="nav-menu">
-        <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">__Главная__</a>
+        <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Управление</a>
         
         <a href="{% url 'src:keys' %}" class="nav-item {% if request.resolver_match.url_name == 'keys' %}active{% endif %}">Ключевые показатели энергоэффективности по предприятию</a>
         <a href="{% url 'src:potential_es' %}" class="nav-item {% if request.resolver_match.url_name == 'potential_es' %}active{% endif %}">Потенциал энергосбережения</a>
