@@ -161,43 +161,19 @@
                 </table>
             </div>
 
-            <!-- 6 графиков эффективности, 2 в ряд -->
-            <div class="graphs-grid" style="grid-template-columns: repeat(2, 1fr);">
-                <div class="graph-card">
-                    <h2 class="graph-title">ТЭ (техническая эффективность) электропотребления</h2>
-                    <canvas id="chartEE_TE"></canvas>
+            <!-- 3 графика: столбцы = текущая, линия = динамическая, каждый на всю ширину -->
+            <div class="efficiency-charts-container">
+                <div class="graph-card" style="width: 100%; height: 400px;">
+                    <h2 class="graph-title">Электропотребление</h2>
+                    <canvas id="chartEE"></canvas>
                 </div>
-                <div class="graph-card">
-                    <h2 class="graph-title">ДЭ (директивная эффективность) электропотребления</h2>
-                    <canvas id="chartEE_DE"></canvas>
+                <div class="graph-card" style="width: 100%; height: 400px; margin-top: 2rem;">
+                    <h2 class="graph-title">Потребление пара</h2>
+                    <canvas id="chartPP"></canvas>
                 </div>
-                <div class="graph-card">
-                    <h2 class="graph-title">ТЭ (техническая) потребления пара</h2>
-                    <canvas id="chartPP_TE"></canvas>
-                </div>
-                <div class="graph-card">
-                    <h2 class="graph-title">ДЭ (директивная) потребления пара</h2>
-                    <canvas id="chartPP_DE"></canvas>
-                </div>
-                <div class="graph-card">
-                    <h2 class="graph-title">ТЭ (техническая) выработки пара</h2>
-                    <canvas id="chartVP_TE"></canvas>
-                </div>
-                <div class="graph-card">
-                    <h2 class="graph-title">ДЭ (директивная) выработки пара</h2>
-                    <canvas id="chartVP_DE"></canvas>
-                </div>
-            </div>
-
-            <!-- Графики коэффициентов энергоэффективности (один под другим, по одному в ряд) -->
-            <div class="efficiency-coeffs" style="margin-top: 2rem;">
-                <div class="graph-card" style="height: 450px; width: 100%;">
-                    <h2 class="graph-title">Коэффициент энергоэффективности (ТЭ — техническая эффективность)</h2>
-                    <canvas id="chartEfficiencyTE"></canvas>
-                </div>
-                <div class="graph-card" style="height: 450px; width: 100%; margin-top: 1.5rem;">
-                    <h2 class="graph-title">Коэффициент энергоэффективности (ДЭ — директивная эффективность)</h2>
-                    <canvas id="chartEfficiencyDE"></canvas>
+                <div class="graph-card" style="width: 100%; height: 400px; margin-top: 2rem;">
+                    <h2 class="graph-title">Выработка пара</h2>
+                    <canvas id="chartVP"></canvas>
                 </div>
             </div>
         </div>
@@ -212,25 +188,63 @@
         // === ДАННЫЕ ДЛЯ ТАБЛИЦ (производительность и удельные нормы) ===
         const prodValues = [571.29, 579.97, 588.64, 597.32, 605.99, 614.67, 623.34, 632.02, 640.69, 649.37, 658.05, 666.72, 675.40, 684.07, 692.75];
 
-        // ----- ЭБЛ -----
-        const elecWinterEBL = [null, null, null, null, null, null, 1.1546, 1.1589, 1.1632, 1.1673, 1.1712, 1.1751, 1.1789, 1.1826, 1.1826];
-        const elecSummerEBL = [1.8140, 1.7512, 1.6902, 1.6310, 1.5736, 1.5177, 1.4634, 1.4105, 1.3591, 1.3091, 1.2604, 1.2130, 1.1668, 1.1217, 1.0778];
-        const steamConsWinterEBL = [null, null, null, null, null, null, 1.3900, 1.4334, 1.4757, 1.5169, 1.5569, 1.5960, 1.6340, 1.6711, 1.6711];
-        const steamConsSummerEBL = [0.9603, 0.9710, 0.9814, 0.9915, 1.0014, 1.0109, 1.0202, 1.0292, 1.0380, 1.0465, 1.0548, 1.0629, 1.0708, 1.0785, 1.0860];
-        const steamProdWinterEBL = steamConsWinterEBL.map(v => v !== null ? v * 0.7 : null);
-        const steamProdSummerEBL = steamConsSummerEBL.map(v => v * 0.7);
+        // ----- Базовые данные для ЭБЛ -----
+        const baseElecWinterEBL = [null, null, null, null, null, null, 1.1546, 1.1589, 1.1632, 1.1673, 1.1712, 1.1751, 1.1789, 1.1826, 1.1826];
+        const baseElecSummerEBL = [1.8140, 1.7512, 1.6902, 1.6310, 1.5736, 1.5177, 1.4634, 1.4105, 1.3591, 1.3091, 1.2604, 1.2130, 1.1668, 1.1217, 1.0778];
+        const baseSteamConsWinterEBL = [null, null, null, null, null, null, 1.3900, 1.4334, 1.4757, 1.5169, 1.5569, 1.5960, 1.6340, 1.6711, 1.6711];
+        const baseSteamConsSummerEBL = [0.9603, 0.9710, 0.9814, 0.9915, 1.0014, 1.0109, 1.0202, 1.0292, 1.0380, 1.0465, 1.0548, 1.0629, 1.0708, 1.0785, 1.0860];
+        const baseSteamProdWinterEBL = baseSteamConsWinterEBL.map(v => v !== null ? v * 0.7 : null);
+        const baseSteamProdSummerEBL = baseSteamConsSummerEBL.map(v => v * 0.7);
 
-        // ----- ИЭЭ -----
-        const elecWinterIEE = [null, null, null, null, null, null, 1.1543, 1.1566, 1.1589, 1.1610, 1.1632, 1.1652, 1.1672, 1.1692, 1.1692];
-        const elecSummerIEE = [1.7872, 1.7256, 1.6657, 1.6077, 1.5512, 1.4964, 1.4431, 1.3913, 1.3408, 1.2917, 1.2439, 1.1974, 1.1520, 1.1078, 1.0647];
-        const steamConsWinterIEE = [null, null, null, null, null, null, 1.3995, 1.4257, 1.4512, 1.4761, 1.5003, 1.5238, 1.5468, 1.5691, 1.5691];
-        const steamConsSummerIEE = [0.9459, 0.9567, 0.9672, 0.9774, 0.9872, 0.9968, 1.0062, 1.0153, 1.0241, 1.0327, 1.0411, 1.0493, 1.0572, 1.0649, 1.0725];
-        const steamProdWinterIEE = steamConsWinterIEE.map(v => v !== null ? v * 0.7 : null);
-        const steamProdSummerIEE = steamConsSummerIEE.map(v => v * 0.7);
+        // ----- Базовые данные для ИЭЭ -----
+        const baseElecWinterIEE = [null, null, null, null, null, null, 1.1543, 1.1566, 1.1589, 1.1610, 1.1632, 1.1652, 1.1672, 1.1692, 1.1692];
+        const baseElecSummerIEE = [1.7872, 1.7256, 1.6657, 1.6077, 1.5512, 1.4964, 1.4431, 1.3913, 1.3408, 1.2917, 1.2439, 1.1974, 1.1520, 1.1078, 1.0647];
+        const baseSteamConsWinterIEE = [null, null, null, null, null, null, 1.3995, 1.4257, 1.4512, 1.4761, 1.5003, 1.5238, 1.5468, 1.5691, 1.5691];
+        const baseSteamConsSummerIEE = [0.9459, 0.9567, 0.9672, 0.9774, 0.9872, 0.9968, 1.0062, 1.0153, 1.0241, 1.0327, 1.0411, 1.0493, 1.0572, 1.0649, 1.0725];
+        const baseSteamProdWinterIEE = baseSteamConsWinterIEE.map(v => v !== null ? v * 0.7 : null);
+        const baseSteamProdSummerIEE = baseSteamConsSummerIEE.map(v => v * 0.7);
 
-        // Для других установок (заглушки)
-        function getUnitData(unit) {
+        // === Функция получения данных с учётом установки, года и месяца ===
+        function getUnitData(unit, year, month) {
+            // Сезонный фактор: 1 - зима, 2 - лето (для ЭБЛ/ИЭЭ)
+            let isWinter = (month >= 1 && month <= 2) || month == 12;
+            let seasonFactor = isWinter ? 0.05 : -0.05; // небольшой сдвиг для зимних/летних значений
+            let noiseLevel = (year == 2021) ? 0.02 : 0.08; // шум для 2021 меньше
+
             if (unit == 1) {
+                // Генерируем данные на основе базовых массивов
+                function applyVariation(baseArray, isWinterSeason) {
+                    return baseArray.map((val, idx) => {
+                        if (val === null) return null;
+                        // Добавляем сезонный сдвиг (зависит от того, зимний или летний сезон в таблице)
+                        // Для зимних строк используем winterFactor, для летних - летний
+                        let seasonShift = 0;
+                        if (isWinterSeason) {
+                            seasonShift = isWinter ? 0.02 : -0.02;
+                        } else {
+                            seasonShift = isWinter ? -0.02 : 0.02;
+                        }
+                        let noise = (Math.random() - 0.5) * noiseLevel * 2;
+                        return val + seasonShift + noise;
+                    });
+                }
+
+                // Для ЭБЛ
+                let elecWinterEBL = applyVariation(baseElecWinterEBL, true);
+                let elecSummerEBL = applyVariation(baseElecSummerEBL, false);
+                let steamConsWinterEBL = applyVariation(baseSteamConsWinterEBL, true);
+                let steamConsSummerEBL = applyVariation(baseSteamConsSummerEBL, false);
+                let steamProdWinterEBL = applyVariation(baseSteamProdWinterEBL, true);
+                let steamProdSummerEBL = applyVariation(baseSteamProdSummerEBL, false);
+
+                // Для ИЭЭ
+                let elecWinterIEE = applyVariation(baseElecWinterIEE, true);
+                let elecSummerIEE = applyVariation(baseElecSummerIEE, false);
+                let steamConsWinterIEE = applyVariation(baseSteamConsWinterIEE, true);
+                let steamConsSummerIEE = applyVariation(baseSteamConsSummerIEE, false);
+                let steamProdWinterIEE = applyVariation(baseSteamProdWinterIEE, true);
+                let steamProdSummerIEE = applyVariation(baseSteamProdSummerIEE, false);
+
                 return {
                     prod: prodValues,
                     ebl: {
@@ -245,14 +259,16 @@
                     }
                 };
             } else {
+                // Для других установок генерируем случайные данные с сезонным фактором
                 let prod = prodValues.map(p => p + (unit-1)*2);
-                function genArray(base, variation) {
-                    return prod.map(p => base + variation * (p / 100) + (Math.random() - 0.5) * 0.2);
+                function genArray(base, variation, isWinterSeason) {
+                    let seasonShift = isWinterSeason ? (isWinter ? 0.03 : -0.03) : (isWinter ? -0.03 : 0.03);
+                    return prod.map(p => base + variation * (p / 100) + seasonShift + (Math.random() - 0.5) * 0.2);
                 }
-                let elecWinterEBL = genArray(1.2, 0.01);
-                let elecSummerEBL = genArray(0.9, 0.015);
-                let steamConsWinterEBL = genArray(0.7, 0.008);
-                let steamConsSummerEBL = genArray(0.6, 0.01);
+                let elecWinterEBL = genArray(1.2, 0.01, true);
+                let elecSummerEBL = genArray(0.9, 0.015, false);
+                let steamConsWinterEBL = genArray(0.7, 0.008, true);
+                let steamConsSummerEBL = genArray(0.6, 0.01, false);
                 let steamProdWinterEBL = steamConsWinterEBL.map(v => v * 0.7);
                 let steamProdSummerEBL = steamConsSummerEBL.map(v => v * 0.7);
 
@@ -288,7 +304,9 @@
         // === Заполнение таблиц ЭБЛ и ИЭЭ ===
         function fillTables() {
             const unit = parseInt(document.getElementById('unitSelect').value);
-            const data = getUnitData(unit);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const data = getUnitData(unit, year, month);
             const prod = data.prod;
 
             document.getElementById('eblProdHeaders').innerHTML = prod.map(p => `<th>${p.toFixed(2)}</th>`).join('');
@@ -340,7 +358,9 @@
         // === Построение столбчатых графиков для вкладки 1 ===
         function buildBarCharts() {
             const unit = parseInt(document.getElementById('unitSelect').value);
-            const data = getUnitData(unit);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const data = getUnitData(unit, year, month);
             const prod = data.prod;
 
             function createChart(canvasId, datasets, yLabel, colors) {
@@ -408,7 +428,7 @@
         }
 
         // ============================================================
-        // === ДАННЫЕ ДЛЯ ТАБЛИЦЫ ЭФФЕКТИВНОСТИ (зависят от установки) ===
+        // === ДАННЫЕ ДЛЯ ТАБЛИЦЫ ЭФФЕКТИВНОСТИ (зависят от установки, года и месяца) ===
         // ============================================================
 
         // Базовые данные для установки 1 (только несколько отрицательных значений)
@@ -451,65 +471,65 @@
               vp_te: 2.58, vp_de: 2.75, vp_fact: 114.5, vp_norm: 109.7 }
         ];
 
-        // Функция получения данных с учётом установки и года
-        function getEfficiencyData(unit, year) {
+        // Функция получения данных эффективности с учётом установки, года и месяца
+        function getEfficiencyData(unit, year, month) {
             const negProb = 0.10; // 10% отрицательных значений
+            // сезонный коэффициент: зимние месяцы (1,2,12) дают небольшое повышение, летние (6,7,8) — понижение
+            let seasonFactor = 0;
+            if (month >= 1 && month <= 2 || month == 12) seasonFactor = 0.3;
+            else if (month >= 6 && month <= 8) seasonFactor = -0.3;
+
             if (unit == 1) {
-                if (year == 2021) {
-                    return baseEfficiency2021.map(row => ({ ...row, year: 2021 }));
-                } else {
-                    return baseEfficiency2021.map(row => {
-                        const genVal = (base) => {
-                            if (base === null) return null;
-                            if (Math.random() < negProb) {
-                                return -(Math.random() * 5 + 0.1);
-                            } else {
-                                return Math.random() * 5 + 0.1;
-                            }
-                        };
-                        return {
-                            ...row,
-                            year: year,
-                            ee_te: genVal(0),
-                            ee_de: genVal(0),
-                            pp_te: genVal(0),
-                            pp_de: genVal(0),
-                            vp_te: genVal(0),
-                            vp_de: genVal(0),
-                            ee_fact: row.ee_fact + (Math.random() - 0.5) * 3,
-                            ee_norm: row.ee_norm + (Math.random() - 0.5) * 2,
-                            pp_fact: row.pp_fact + (Math.random() - 0.5) * 8,
-                            pp_norm: row.pp_norm + (Math.random() - 0.5) * 5,
-                            vp_fact: row.vp_fact + (Math.random() - 0.5) * 10,
-                            vp_norm: row.vp_norm + (Math.random() - 0.5) * 6
-                        };
-                    });
-                }
+                // Всегда генерируем на основе baseEfficiency2021 с учётом года и месяца
+                return baseEfficiency2021.map(row => {
+                    let noiseLevel = (year == 2021) ? 0.2 : 1.5;
+                    const genVal = (base) => {
+                        if (base === null) return null;
+                        let val = base + seasonFactor + (Math.random() - 0.5) * noiseLevel * 0.5;
+                        return val;
+                    };
+                    return {
+                        ...row,
+                        year: year,
+                        ee_te: genVal(row.ee_te),
+                        ee_de: genVal(row.ee_de),
+                        pp_te: genVal(row.pp_te),
+                        pp_de: genVal(row.pp_de),
+                        vp_te: genVal(row.vp_te),
+                        vp_de: genVal(row.vp_de),
+                        ee_fact: row.ee_fact + seasonFactor * 2 + (Math.random() - 0.5) * (year == 2021 ? 0.5 : 1.5),
+                        ee_norm: row.ee_norm + seasonFactor * 1.5 + (Math.random() - 0.5) * (year == 2021 ? 0.5 : 1.0),
+                        pp_fact: row.pp_fact + seasonFactor * 3 + (Math.random() - 0.5) * (year == 2021 ? 1 : 4),
+                        pp_norm: row.pp_norm + seasonFactor * 2 + (Math.random() - 0.5) * (year == 2021 ? 1 : 3),
+                        vp_fact: row.vp_fact + seasonFactor * 4 + (Math.random() - 0.5) * (year == 2021 ? 1.5 : 5),
+                        vp_norm: row.vp_norm + seasonFactor * 3 + (Math.random() - 0.5) * (year == 2021 ? 1 : 3)
+                    };
+                });
             } else {
                 const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-                return months.map((month, idx) => {
+                return months.map((monthName, idx) => {
                     const genVal = () => {
                         if (Math.random() < negProb) {
-                            return -(Math.random() * 5 + 0.1);
+                            return -(Math.random() * 2.0 + 0.1) + seasonFactor;
                         } else {
-                            return Math.random() * 5 + 0.1;
+                            return Math.random() * 2.0 + 0.1 + seasonFactor;
                         }
                     };
                     return {
-                        month: month,
+                        month: monthName,
                         year: year,
                         ee_te: genVal(),
                         ee_de: genVal(),
-                        ee_fact: Math.random() * 50 + 5,
-                        ee_norm: Math.random() * 40 + 5,
+                        ee_fact: Math.random() * 20 + 5 + seasonFactor * 2,
+                        ee_norm: Math.random() * 15 + 5 + seasonFactor * 1.5,
                         pp_te: genVal(),
                         pp_de: genVal(),
-                        pp_fact: Math.random() * 200 + 20,
-                        pp_norm: Math.random() * 180 + 20,
+                        pp_fact: Math.random() * 80 + 20 + seasonFactor * 5,
+                        pp_norm: Math.random() * 70 + 20 + seasonFactor * 4,
                         vp_te: genVal(),
                         vp_de: genVal(),
-                        vp_fact: Math.random() * 150 + 10,
-                        vp_norm: Math.random() * 130 + 10
+                        vp_fact: Math.random() * 60 + 10 + seasonFactor * 4,
+                        vp_norm: Math.random() * 50 + 10 + seasonFactor * 3
                     };
                 });
             }
@@ -519,7 +539,8 @@
         function fillEfficiencyTable() {
             const unit = parseInt(document.getElementById('unitSelect').value);
             const year = parseInt(document.getElementById('yearSelect').value);
-            const data = getEfficiencyData(unit, year);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const data = getEfficiencyData(unit, year, month);
             const tbody = document.getElementById('efficiencyBody');
             tbody.innerHTML = '';
             data.forEach(row => {
@@ -549,118 +570,90 @@
             });
         }
 
-        // === Построение 6 графиков эффективности (2 в ряд) + коэффициенты ===
+        // === Построение 3 графиков: столбцы = текущая, линия = динамическая ===
         function buildEfficiencyCharts() {
             const unit = parseInt(document.getElementById('unitSelect').value);
             const year = parseInt(document.getElementById('yearSelect').value);
-            const data = getEfficiencyData(unit, year);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            const data = getEfficiencyData(unit, year, month);
             const months = data.map(d => d.month);
 
-            function createBarChart(canvasId, values, label, color) {
+            // Генерируем данные для КЭЭ (линии) с меньшим разбросом и учётом месяца
+            const baseTE = 80;
+            const baseDE = 75;
+            // сезонный сдвиг для линии
+            let seasonShift = 0;
+            if (month >= 1 && month <= 2 || month == 12) seasonShift = 2;
+            else if (month >= 6 && month <= 8) seasonShift = -2;
+
+            const dataTE = months.map((_, i) => {
+                let shift = (i < 3 || i > 9) ? 5 : -5;
+                return baseTE + shift + (Math.random() - 0.5) * 5 + seasonShift;
+            });
+            const dataDE = months.map((_, i) => {
+                let shift = (i < 3 || i > 9) ? 3 : -3;
+                return baseDE + shift + (Math.random() - 0.5) * 5 + seasonShift;
+            });
+
+            function createMixedChart(canvasId, barData, lineData, barLabel, lineLabel, barColor, lineColor) {
                 const ctx = document.getElementById(canvasId).getContext('2d');
                 const chart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: months,
-                        datasets: [{
-                            label: label,
-                            data: values.map(v => v !== null ? v : 0),
-                            backgroundColor: color || 'rgba(127,193,229,0.6)',
-                            borderColor: color ? color.replace('0.6', '1') : 'rgba(127,193,229,1)',
-                            borderWidth: 1
-                        }]
+                        datasets: [
+                            {
+                                label: barLabel,
+                                data: barData.map(v => v !== null ? v : 0),
+                                backgroundColor: barColor || 'rgba(127,193,229,0.6)',
+                                borderColor: barColor ? barColor.replace('0.6', '1') : 'rgba(127,193,229,1)',
+                                borderWidth: 1,
+                                order: 1
+                            },
+                            {
+                                label: lineLabel,
+                                data: lineData.map(v => v !== null ? v : 0),
+                                type: 'line',
+                                borderColor: lineColor || 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'transparent',
+                                tension: 0.2,
+                                pointRadius: 3,
+                                pointBackgroundColor: lineColor || 'rgba(54, 162, 235, 1)',
+                                borderWidth: 2,
+                                fill: false,
+                                order: 0
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
                         scales: {
-                            y: { title: { display: true, text: '%' } }
+                            y: {
+                                title: { display: true, text: '%' }
+                            }
                         }
                     }
                 });
                 window.charts.push(chart);
             }
 
-            const ee_te = data.map(d => d.ee_te);
-            const ee_de = data.map(d => d.ee_de);
-            const pp_te = data.map(d => d.pp_te);
-            const pp_de = data.map(d => d.pp_de);
-            const vp_te = data.map(d => d.vp_te);
-            const vp_de = data.map(d => d.vp_de);
+            const ee_bar = data.map(d => d.ee_te);
+            const ee_line = data.map(d => d.ee_de);
+            const pp_bar = data.map(d => d.pp_te);
+            const pp_line = data.map(d => d.pp_de);
+            const vp_bar = data.map(d => d.vp_te);
+            const vp_line = data.map(d => d.vp_de);
 
-            const colorTE = 'rgba(54, 162, 235, 0.6)';
-            const colorDE = 'rgba(255, 159, 64, 0.6)';
+            const barColor = 'rgba(54, 162, 235, 0.6)';
+            const lineColor = 'rgba(255, 159, 64, 1)';
 
-            createBarChart('chartEE_TE', ee_te, 'ТЭ', colorTE);
-            createBarChart('chartEE_DE', ee_de, 'ДЭ', colorDE);
-            createBarChart('chartPP_TE', pp_te, 'ТЭ', colorTE);
-            createBarChart('chartPP_DE', pp_de, 'ДЭ', colorDE);
-            createBarChart('chartVP_TE', vp_te, 'ТЭ', colorTE);
-            createBarChart('chartVP_DE', vp_de, 'ДЭ', colorDE);
-
-            // === Графики коэффициентов энергоэффективности (ТЭ и ДЭ) ===
-            // Генерируем отдельные данные для ТЭ и ДЭ
-            const baseTE = 80;
-            const baseDE = 75;
-            const dataTE = months.map((_, i) => {
-                let shift = (i < 3 || i > 9) ? 5 : -5;
-                return baseTE + shift + (Math.random() - 0.5) * 10;
-            });
-            const dataDE = months.map((_, i) => {
-                let shift = (i < 3 || i > 9) ? 3 : -3;
-                return baseDE + shift + (Math.random() - 0.5) * 12;
-            });
-
-            const ctxTE = document.getElementById('chartEfficiencyTE').getContext('2d');
-            const chartTE = new Chart(ctxTE, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'КЭЭ (ТЭ), %',
-                        data: dataTE,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: {
-                        y: { title: { display: true, text: '%' } }
-                    }
-                }
-            });
-            window.charts.push(chartTE);
-
-            const ctxDE = document.getElementById('chartEfficiencyDE').getContext('2d');
-            const chartDE = new Chart(ctxDE, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'КЭЭ (ДЭ), %',
-                        data: dataDE,
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        fill: true,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: {
-                        y: { title: { display: true, text: '%' } }
-                    }
-                }
-            });
-            window.charts.push(chartDE);
+            createMixedChart('chartEE', ee_bar, ee_line, 'Текущая эффективность', 'Динамическая эффективность', barColor, lineColor);
+            createMixedChart('chartPP', pp_bar, pp_line, 'Текущая эффективность', 'Динамическая эффективность', barColor, lineColor);
+            createMixedChart('chartVP', vp_bar, vp_line, 'Текущая эффективность', 'Динамическая эффективность', barColor, lineColor);
         }
 
         // === Обновление всех компонентов ===
@@ -856,10 +849,15 @@
         text-align: center;
         margin-bottom: 0.5rem;
     }
-    .efficiency-coeffs .graph-card {
-        height: 450px;
+    .efficiency-charts-container .graph-card {
         width: 100%;
+        height: 400px;
+        margin-top: 2rem;
     }
+    .efficiency-charts-container .graph-card:first-child {
+        margin-top: 0;
+    }
+
     @media (max-width: 768px) {
         .graphs-grid {
             grid-template-columns: 1fr;
@@ -881,7 +879,7 @@
         .efficiency-table td {
             padding: 0.3rem 0.2rem;
         }
-        .efficiency-coeffs .graph-card {
+        .efficiency-charts-container .graph-card {
             height: 350px;
         }
     }

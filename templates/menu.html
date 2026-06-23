@@ -2,12 +2,12 @@
     <div class="logo">Энергоэффективность и планирование потребления ТЭР</div>
     
     <nav class="nav-menu">
-        <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Управление</a>
+        <a href="{% url 'src:index' %}" class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Главное меню</a>
         
         <a href="{% url 'src:keys' %}" class="nav-item {% if request.resolver_match.url_name == 'keys' %}active{% endif %}">Ключевые показатели энергоэффективности по предприятию</a>
         <a href="{% url 'src:potential_es' %}" class="nav-item {% if request.resolver_match.url_name == 'potential_es' %}active{% endif %}">Потенциал энергосбережения</a>
         <a href="{% url 'src:indicators' %}" class="nav-item {% if request.resolver_match.url_name == 'indicators' %}active{% endif %}">Индикаторы энергоэффективности установки, объекта</a>
-        <a href="{% url 'src:intensity' %}" class="nav-item {% if request.resolver_match.url_name == 'intensity' %}active{% endif %}">Энергоемкость, индекс энергоемкости</a>
+        <!-- <a href="{% url 'src:intensity' %}" class="nav-item {% if request.resolver_match.url_name == 'intensity' %}active{% endif %}">Энергоемкость, индекс энергоемкости</a> -->
         <!-- <a href="{% url 'src:tables' %}" class="nav-item {% if request.resolver_match.url_name == 'tables' %}active{% endif %}">Таблицы</a> -->
         
         
