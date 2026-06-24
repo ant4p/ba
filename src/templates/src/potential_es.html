@@ -51,8 +51,6 @@
         </div>
     </div>
 
-
-
     <!-- Таблица 1: Абсолютные значения -->
     <h3 class="section-title">Потенциал энергосбережения ТЭР в абсолютных величинах</h3>
     <div class="table-wrapper" style="margin-bottom: 2rem;">
@@ -107,13 +105,13 @@
 </div>
 
 <style>
-    /* Стили для сводных карточек */
+    /* Стили для сводных карточек — теперь сетка без лишнего flex */
     .summary-cards {
-        display: flex;
+        display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 1.5rem;
         margin: 2rem 0 2.5rem;
-        
+        width: 100%; /* занимает всю ширину контейнера */
     }
     .summary-card {
         background: #ffffff;
@@ -171,12 +169,11 @@
         font-family: 'Inter', sans-serif;
         font-size: 0.9rem;
         background: white;
-        
     }
     .data-table th, .data-table td {
         padding: 0.6rem 0.5rem;
         border-bottom: 1px solid #e9ecef;
-        text-align: center;  /* центрируем все ячейки */
+        text-align: center;
         font-weight: 400;
     }
     .data-table th {
@@ -193,7 +190,6 @@
         .summary-cards {
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
-            display: grid;
         }
         .card-value {
             font-size: 1.3rem;
