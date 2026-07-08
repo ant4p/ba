@@ -21,11 +21,11 @@
                 </svg>
             </div>
             <h2 class="module-title">Ключевые показатели энергоэффективности по предприятию</h2>
-            <p class="module-description">Объемы потребления, цены и затраты на топливно-энергетические ресурсы</p>
+            <p class="module-description">Объемы потребления, цены и затраты на ТЭР</p>
             <div class="module-features">
-                <span class="feature-tag">Энергия</span>
-                <span class="feature-tag">Пар</span>
-                <span class="feature-tag">Газ</span>
+                <span class="feature-tag">Электроэнергия</span>
+                <span class="feature-tag">Тепловая энергия</span>
+                <span class="feature-tag">Топливо</span>
             </div>
             <a href="{% url 'src:keys' %}" class="module-button">
                 Перейти
@@ -41,11 +41,11 @@
                 </svg>
             </div>
             <h2 class="module-title">Потенциал энергосбережения</h2>
-            <p class="module-description">Суммарный потенциал на 2026 год по установкам</p>
+            <p class="module-description">Суммарный потенциал на 2026 год по установкам предприятия</p>
             <div class="module-features">
-                <span class="feature-tag">Мин/макс</span>
-                <span class="feature-tag">Среднее</span>
-                <span class="feature-tag">Разброс</span>
+                <span class="feature-tag">Потребление</span>
+                <span class="feature-tag">Выработка</span>
+                <span class="feature-tag">Потенциал</span>
             </div>
             <a href="{% url 'src:potential_es' %}" class="module-button">
                 Перейти
@@ -60,12 +60,12 @@
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                 </svg>
             </div>
-            <h2 class="module-title">Индикаторы энергоэффективности установки, объекта</h2>
-            <p class="module-description">Удельные нормы и эффективность использования ТЭР</p>
+            <h2 class="module-title">Алализ работы установок</h2>
+            <p class="module-description">Энергетическая базовая линия, индикаторы энергоэффективности и эффективность использования ТЭР</p>
             <div class="module-features">
                 <span class="feature-tag">Индикаторы</span>
                 <span class="feature-tag">Энергоэффективность</span>
-                <span class="feature-tag">Сырьё</span>
+                <span class="feature-tag">ТЭР</span>
             </div>
             <a href="{% url 'src:indicators' %}" class="module-button">
                 Перейти
@@ -107,12 +107,12 @@
                     <path d="M22 12h-4l-3-3"/>
                 </svg>
             </div>
-            <h2 class="module-title">Потребление и выработка ТЭР, план/факт</h2>
+            <h2 class="module-title">Данные о потреблении и выработке ТЭР по установкам</h2>
             <p class="module-description">План/Факт количества сырья, количества и стоимости ТЭР</p>
             <div class="module-features">
-                <span class="feature-tag">Сводка</span>
-                <span class="feature-tag">Экспорт</span>
-                <span class="feature-tag">Все периоды</span>
+                <span class="feature-tag">Потребление</span>
+                <span class="feature-tag">Выработка</span>
+                <span class="feature-tag">ТЭР</span>
             </div>
             <a href="{% url 'src:plan_fact' %}" class="module-button">
                 Перейти

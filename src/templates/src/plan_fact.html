@@ -67,7 +67,7 @@
 
     <!-- Отдельная таблица для сырья -->
      <h3 class="section-title">Объем потребления сырья</h3>
-    <div class="table-wrapper" style="margin-bottom: 2rem;">
+    <div class="table-wrapper" style="margin-bottom: 1rem;">
         <table class="data-table summary-info-table" id="rawSummaryTable">
             <thead><tr><th>Наименование</th><th>План, тн</th><th>Факт, тн</th><th>Отклонение, тн</th><th>% отклонения</th></tr></thead>
             <tbody id="rawSummaryBody"></tbody>
@@ -95,8 +95,8 @@
             <label>Ресурс для графиков и таблицы:</label>
             <select id="resourceSelect" class="filter-select">
                 <option value="electricity">Электроэнергия</option>
-                <option value="steam_cons">Теплоэнергия (потребление пара)</option>
-                <option value="steam_prod">Теплоэнергия (выработка пара)</option>
+                <option value="steam_cons">Тепловая энергия (потребление пара)</option>
+                <option value="steam_prod">Тепловая энергия (выработка пара)</option>
                 <option value="fuel">Топливо (газ)</option>
             </select>
         </div>
@@ -122,7 +122,7 @@
 
             <h2 class="graph-title" id="costLineTitle">Стоимость электроэнергии, руб.</h2>
             <div class="graph-card" style="height: 280px;"><canvas id="costLineChart"></canvas></div>
-            <p class="graph-note" id="costLineNote">Стоимость по тарифу.</p>
+            <p class="graph-note" id="costLineNote">Динамика стоимости электроэнергии (Тариф: 3.50 руб./кВт·ч)</p>
         </div>
 
         <!-- Вкладка 2: Столбчатые диаграммы -->
@@ -133,16 +133,16 @@
 
             <h2 class="graph-title" id="costBarTitle">Стоимость ресурса, руб.</h2>
             <div class="graph-card" style="height: 280px;"><canvas id="costBarChart"></canvas></div>
-            <p class="graph-note" id="costBarNote">Стоимость по тарифу.</p>
+            <p class="graph-note" id="costBarNote">Динамика стоимости ресурса (Тариф: сумма)</p>
         </div>
 
         <!-- Вкладка 3: Таблица -->
         <div id="tables-tab" class="tab-content">
             <div class="table-wrapper">
-                <table class="data-table" id="dynamicTable">
+                <table class="data-table plan-fact-table" id="dynamicTable">
                     <thead id="tableHeader"></thead>
                     <tbody id="tableBody"></tbody>
-                </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -263,15 +263,14 @@
             case 'electricity':
                 return { fact: data.electricity.fact, plan: data.electricity.plan, unit: 'кВт·ч', tariff: tariffs.electricity, name: 'Электроэнергия' };
             case 'steam_cons':
-                return { fact: data.steam.fact, plan: data.steam.plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Теплоэнергия (потребление пара)' };
+                return { fact: data.steam.fact, plan: data.steam.plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Тепловая энергия (потребление пара)' };
             case 'steam_prod':
-                // Используем специальные данные steam_prod, если есть, иначе генерируем на лету
                 if (data.steam_prod) {
-                    return { fact: data.steam_prod.fact, plan: data.steam_prod.plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Теплоэнергия (выработка пара)' };
+                    return { fact: data.steam_prod.fact, plan: data.steam_prod.plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Тепловая энергия (выработка пара)' };
                 } else {
                     const plan = data.steam.plan.map(v => v * 1.2);
                     const fact = randomizeFact(plan, 0.05);
-                    return { fact, plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Теплоэнергия (выработка пара)' };
+                    return { fact, plan, unit: 'Гкал', tariff: tariffs.steam, name: 'Тепловая энергия (выработка пара)' };
                 }
             case 'fuel':
                 return { fact: data.fuel.fact, plan: data.fuel.plan, unit: 'тн', tariff: tariffs.fuel, name: 'Топливо (газ)' };
@@ -291,31 +290,146 @@
         const costFact = factRes.map(v=>v*resData.tariff);
         const costPlan = planRes.map(v=>v*resData.tariff);
         const labels = Array.from({ length: rawFact.length }, (_,i)=>i+1);
+        
+        // Линейный график - Сырье
         if (charts.rawLine) charts.rawLine.destroy();
         charts.rawLine = new Chart(document.getElementById('rawLineChart'), {
-            type: 'line', data: { labels, datasets: [
-                { label: 'Факт', data: rawFact, borderColor: 'rgba(255,140,66,1)', backgroundColor: 'rgba(255,140,66,0.1)', fill: true, tension: 0.2, pointRadius: 2 },
-                { label: 'План', data: rawPlan, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', fill: true, tension: 0.2, pointRadius: 2 }
-            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            type: 'line', 
+            data: { 
+                labels, 
+                datasets: [
+                    { 
+                        label: 'Факт', 
+                        data: rawFact, 
+                        borderColor: 'rgba(255,140,66,1)', 
+                        backgroundColor: 'rgba(255,140,66,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    },
+                    { 
+                        label: 'План', 
+                        data: rawPlan, 
+                        borderColor: 'rgba(41,128,185,1)', 
+                        backgroundColor: 'rgba(41,128,185,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    }
+                ] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 20
+                        }
+                    } 
+                } 
+            }
         });
+        
+        // Линейный график - Ресурс
         if (charts.resourceLine) charts.resourceLine.destroy();
         charts.resourceLine = new Chart(document.getElementById('resourceLineChart'), {
-            type: 'line', data: { labels, datasets: [
-                { label: 'Факт', data: factRes, borderColor: 'rgba(241,196,15,1)', backgroundColor: 'rgba(241,196,15,0.1)', fill: true, tension: 0.2, pointRadius: 2 },
-                { label: 'План', data: planRes, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', fill: true, tension: 0.2, pointRadius: 2 }
-            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            type: 'line', 
+            data: { 
+                labels, 
+                datasets: [
+                    { 
+                        label: 'Факт', 
+                        data: factRes, 
+                        borderColor: 'rgba(241,196,15,1)', 
+                        backgroundColor: 'rgba(241,196,15,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    },
+                    { 
+                        label: 'План', 
+                        data: planRes, 
+                        borderColor: 'rgba(41,128,185,1)', 
+                        backgroundColor: 'rgba(41,128,185,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    }
+                ] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 20
+                        }
+                    } 
+                } 
+            }
         });
+        
+        // Линейный график - Стоимость
         if (charts.costLine) charts.costLine.destroy();
         charts.costLine = new Chart(document.getElementById('costLineChart'), {
-            type: 'line', data: { labels, datasets: [
-                { label: 'Факт', data: costFact, borderColor: 'rgba(46,204,113,1)', backgroundColor: 'rgba(46,204,113,0.1)', fill: true, tension: 0.2, pointRadius: 2 },
-                { label: 'План', data: costPlan, borderColor: 'rgba(41,128,185,1)', backgroundColor: 'rgba(41,128,185,0.1)', fill: true, tension: 0.2, pointRadius: 2 }
-            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            type: 'line', 
+            data: { 
+                labels, 
+                datasets: [
+                    { 
+                        label: 'Факт', 
+                        data: costFact, 
+                        borderColor: 'rgba(46,204,113,1)', 
+                        backgroundColor: 'rgba(46,204,113,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    },
+                    { 
+                        label: 'План', 
+                        data: costPlan, 
+                        borderColor: 'rgba(41,128,185,1)', 
+                        backgroundColor: 'rgba(41,128,185,0.1)', 
+                        fill: true, 
+                        tension: 0.2, 
+                        pointRadius: 2,
+                        pointStyle: 'circle'
+                    }
+                ] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 20
+                        }
+                    } 
+                } 
+            }
         });
+        
         document.getElementById('resourceLineTitle').innerHTML = `${resData.name}, ${resData.unit}`;
         document.getElementById('resourceLineNote').innerHTML = `Динамика фактического и планового потребления ${resData.name.toLowerCase()}.`;
         document.getElementById('costLineTitle').innerHTML = `Стоимость ${resData.name.toLowerCase()}, руб.`;
-        document.getElementById('costLineNote').innerHTML = `Тариф: ${resData.tariff} руб./${resData.unit}.`;
+        document.getElementById('costLineNote').innerHTML = `Динамика стоимости ${resData.name.toLowerCase()} (Тариф: ${resData.tariff} руб./${resData.unit})`;
     }
 
     function updateBarCharts() {
@@ -343,7 +457,7 @@
             ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } } }
         });
         document.getElementById('costBarTitle').innerHTML = `Стоимость ${name.toLowerCase()}, руб.`;
-        document.getElementById('costBarNote').innerHTML = `Тариф: ${tariff} руб./${unitLabel}.`;
+        document.getElementById('costBarNote').innerHTML = `Динамика стоимости ${name.toLowerCase()} (Тариф: ${tariff} руб./${unitLabel})`;
     }
 
     function updateTable() {
@@ -358,12 +472,25 @@
         const labels = Array.from({ length: rawFact.length }, (_,i)=>i+1);
         const thead = document.getElementById('tableHeader');
         thead.innerHTML = `
-            <tr><th rowspan="2">День</th>
-                <th colspan="4">Сырье, тн</th>
-                <th colspan="4">${name}, ${unitLabel}</th>
-                <th colspan="4">Стоимость ${name.toLowerCase()}, руб.</th>
+            <tr><th rowspan="2" style="text-align: center; border-right: 2px solid #7fc1e5;">День</th>
+                <th colspan="4" style="text-align: center; border-right: 2px solid #7fc1e5;">Сырье, тн</th>
+                <th colspan="4" style="text-align: center; border-right: 2px solid #7fc1e5;">${name}, ${unitLabel}</th>
+                <th colspan="4" style="text-align: center;">Стоимость ${name.toLowerCase()}, руб.</th>
             </tr>
-            <tr><th>Факт</th><th>План</th><th>Откл.</th><th>%</th><th>Факт</th><th>План</th><th>Откл.</th><th>%</th><th>Факт</th><th>План</th><th>Откл.</th><th>%</th></tr>
+            <tr>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Факт</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">План</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Откл.</th>
+                <th style="text-align: center; border-right: 2px solid #7fc1e5;">%</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Факт</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">План</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Откл.</th>
+                <th style="text-align: center; border-right: 2px solid #7fc1e5;">%</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Факт</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">План</th>
+                <th style="text-align: center; border-right: 1px solid #b9dcf2;">Откл.</th>
+                <th style="text-align: center;">%</th>
+            </tr>
         `;
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
@@ -381,18 +508,19 @@
             sumResFact += fact[i]; sumResPlan += plan[i]; sumResAbs += resDev;
             sumCostFact += costFact[i]; sumCostPlan += costPlan[i]; sumCostAbs += costDev;
             tbody.insertAdjacentHTML('beforeend', `
-                <tr><td style="text-align: center;">${labels[i]}</td>
-                    <td style="text-align: right;">${rawFact[i].toFixed(3)}</td>
-                    <td style="text-align: right;">${rawPlan[i].toFixed(3)}</td>
-                    <td style="text-align: right; color: ${rawDev>=0?'#ef4444':'#10b981'}">${rawDev>0?'+':''}${rawDev.toFixed(3)}</td>
-                    <td style="text-align: right; color: ${rawPct>=0?'#ef4444':'#10b981'}">${rawPct>0?'+':''}${rawPct.toFixed(1)}%</td>
-                    <td style="text-align: right;">${fact[i].toFixed(3)}</td>
-                    <td style="text-align: right;">${plan[i].toFixed(3)}</td>
-                    <td style="text-align: right; color: ${resDev>=0?'#ef4444':'#10b981'}">${resDev>0?'+':''}${resDev.toFixed(3)}</td>
-                    <td style="text-align: right; color: ${resPct>=0?'#ef4444':'#10b981'}">${resPct>0?'+':''}${resPct.toFixed(1)}%</td>
-                    <td style="text-align: right;">${costFact[i].toFixed(2)}</td>
-                    <td style="text-align: right;">${costPlan[i].toFixed(2)}</td>
-                    <td style="text-align: right; color: ${costDev>=0?'#ef4444':'#10b981'}">${costDev>0?'+':''}${costDev.toFixed(2)}</td>
+                <tr>
+                    <td style="text-align: center; border-right: 2px solid #7fc1e5;">${labels[i]}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${rawFact[i].toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${rawPlan[i].toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${rawDev>=0?'#ef4444':'#10b981'}">${rawDev>0?'+':''}${rawDev.toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 2px solid #7fc1e5; color: ${rawPct>=0?'#ef4444':'#10b981'}">${rawPct>0?'+':''}${rawPct.toFixed(1)}%</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${fact[i].toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${plan[i].toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${resDev>=0?'#ef4444':'#10b981'}">${resDev>0?'+':''}${resDev.toFixed(3)}</td>
+                    <td style="text-align: right; border-right: 2px solid #7fc1e5; color: ${resPct>=0?'#ef4444':'#10b981'}">${resPct>0?'+':''}${resPct.toFixed(1)}%</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${costFact[i].toFixed(2)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2;">${costPlan[i].toFixed(2)}</td>
+                    <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${costDev>=0?'#ef4444':'#10b981'}">${costDev>0?'+':''}${costDev.toFixed(2)}</td>
                     <td style="text-align: right; color: ${costPct>=0?'#ef4444':'#10b981'}">${costPct>0?'+':''}${costPct.toFixed(1)}%</td>
                 </tr>`);
         }
@@ -401,18 +529,18 @@
         const costPctTotal = sumCostPlan !== 0 ? (sumCostAbs / sumCostPlan) * 100 : 0;
         tbody.insertAdjacentHTML('beforeend', `
             <tr style="background-color: #f0f9ff; font-weight: 600;">
-                <td style="text-align: center;"><strong>Итого</strong></td>
-                <td style="text-align: right;"><strong>${sumRawFact.toFixed(3)}</strong></td>
-                <td style="text-align: right;"><strong>${sumRawPlan.toFixed(3)}</strong></td>
-                <td style="text-align: right; color: ${sumRawAbs>=0?'#ef4444':'#10b981'}"><strong>${sumRawAbs>0?'+':''}${sumRawAbs.toFixed(3)}</strong></td>
-                <td style="text-align: right; color: ${rawPctTotal>=0?'#ef4444':'#10b981'}"><strong>${rawPctTotal>0?'+':''}${rawPctTotal.toFixed(1)}%</strong></td>
-                <td style="text-align: right;"><strong>${sumResFact.toFixed(3)}</strong></td>
-                <td style="text-align: right;"><strong>${sumResPlan.toFixed(3)}</strong></td>
-                <td style="text-align: right; color: ${sumResAbs>=0?'#ef4444':'#10b981'}"><strong>${sumResAbs>0?'+':''}${sumResAbs.toFixed(3)}</strong></td>
-                <td style="text-align: right; color: ${resPctTotal>=0?'#ef4444':'#10b981'}"><strong>${resPctTotal>0?'+':''}${resPctTotal.toFixed(1)}%</strong></td>
-                <td style="text-align: right;"><strong>${sumCostFact.toFixed(2)}</strong></td>
-                <td style="text-align: right;"><strong>${sumCostPlan.toFixed(2)}</strong></td>
-                <td style="text-align: right; color: ${sumCostAbs>=0?'#ef4444':'#10b981'}"><strong>${sumCostAbs>0?'+':''}${sumCostAbs.toFixed(2)}</strong></td>
+                <td style="text-align: center; border-right: 2px solid #7fc1e5;"><strong>Итого</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumRawFact.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumRawPlan.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${sumRawAbs>=0?'#ef4444':'#10b981'}"><strong>${sumRawAbs>0?'+':''}${sumRawAbs.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 2px solid #7fc1e5; color: ${rawPctTotal>=0?'#ef4444':'#10b981'}"><strong>${rawPctTotal>0?'+':''}${rawPctTotal.toFixed(1)}%</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumResFact.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumResPlan.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${sumResAbs>=0?'#ef4444':'#10b981'}"><strong>${sumResAbs>0?'+':''}${sumResAbs.toFixed(3)}</strong></td>
+                <td style="text-align: right; border-right: 2px solid #7fc1e5; color: ${resPctTotal>=0?'#ef4444':'#10b981'}"><strong>${resPctTotal>0?'+':''}${resPctTotal.toFixed(1)}%</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumCostFact.toFixed(2)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2;"><strong>${sumCostPlan.toFixed(2)}</strong></td>
+                <td style="text-align: right; border-right: 1px solid #b9dcf2; color: ${sumCostAbs>=0?'#ef4444':'#10b981'}"><strong>${sumCostAbs>0?'+':''}${sumCostAbs.toFixed(2)}</strong></td>
                 <td style="text-align: right; color: ${costPctTotal>=0?'#ef4444':'#10b981'}"><strong>${costPctTotal>0?'+':''}${costPctTotal.toFixed(1)}%</strong></td>
             </tr>`);
     }
@@ -453,7 +581,7 @@
             const percentPlan = item.plan ? (item.plan / totalCostPlan * 100) : 0;
             const percentFact = item.fact ? (item.fact / totalCostFact * 100) : 0;
             tbodyInfo.insertAdjacentHTML('beforeend', `
-                <tr><td style="text-align: left;"><strong>${item.name}</strong></td>
+                <tr><td style="text-align: center;"><strong>${item.name}</strong></td>
                     <td style="text-align: center;">${item.plan.toFixed(1)}</td>
                     <td style="text-align: center;">${item.fact.toFixed(1)}</td>
                     <td style="text-align: center; color: ${dev>=0?'#ef4444':'#10b981'}">${dev>0?'+':''}${dev.toFixed(1)}</td>
@@ -551,11 +679,31 @@
     .tab-content.active { display: block; }
     .table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #e9ecef; background: white; margin-bottom: 1rem; }
     .data-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
-    .data-table th, .data-table td { padding: 0.6rem 0.5rem; border-bottom: 1px solid #e9ecef; color: #4a5a6e; text-align: center; }
+    .data-table th, .data-table td { padding: 0.6rem 0.5rem; border-bottom: 1px solid #e9ecef; color: #4a5a6e; }
     .data-table th { background: #f9fafc; color: #0f2637; font-weight: 500; border-bottom: 2px solid #e0f2fe; text-align: center; }
-    .data-table td:first-child, .data-table th:first-child { text-align: left; font-weight: 500; }
+    .data-table td:first-child, .data-table th:first-child { text-align: center; font-weight: 500; }
     .data-table td { text-align: right; }
-    .data-table td:first-child { text-align: center; }
+    
+    /* Стили для таблицы план/факт с вертикальными линиями в цветах как на предыдущей странице */
+    .plan-fact-table th,
+    .plan-fact-table td {
+        border-right: 1px solid #b9dcf2;
+    }
+    .plan-fact-table th:last-child,
+    .plan-fact-table td:last-child {
+        border-right: none;
+    }
+    .plan-fact-table th:first-child,
+    .plan-fact-table td:first-child {
+        border-right: 2px solid #7fc1e5;
+    }
+    .plan-fact-table th:nth-child(5),
+    .plan-fact-table td:nth-child(5),
+    .plan-fact-table th:nth-child(9),
+    .plan-fact-table td:nth-child(9) {
+        border-right: 2px solid #7fc1e5 !important;
+    }
+    
     .graph-card { background: white; border: 1px solid #e9ecef; border-radius: 24px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; height: 280px; }
     .graph-card canvas { width: 100% !important; height: 100% !important; max-height: 220px; }
     .graph-card.doughnut-card { height: auto; min-height: 320px; justify-content: flex-start; }
@@ -563,5 +711,24 @@
     .graph-title { font-size: 1.2rem; font-weight: 500; margin: 0.5rem 0 1rem; text-align: center; }
     .graph-note { color: #94a3b8; font-size: 0.85rem; text-align: center; margin-top: 0.5rem; }
     .section-title { font-size: 1.2rem; font-weight: 500; margin: 0.5rem 0 1rem; color: #0f2637; }
+    
+    /* Центрирование наименований в таблице стоимости затрат */
+    #summaryInfoTable td:first-child {
+        text-align: center !important;
+    }
+    #rawSummaryTable td:first-child {
+        text-align: center !important;
+    }
+    
+    
+    @media print {
+        .export-block { display: none; }
+        .filters-panel { display: none; }
+        .tab-btn { display: none; }
+        .tabs-header { display: none; }
+        .tab-content { display: block !important; }
+        .graph-card { break-inside: avoid; }
+        .table-wrapper { break-inside: avoid; }
+    }
 </style>
 {% endblock %}

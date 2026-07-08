@@ -17,41 +17,67 @@
             <div class="card-label">Электрическая энергия</div>
             <div class="card-value">1 618,0 <span class="card-unit">МВт·ч</span></div>
             <div class="card-percent">5,39%</div>
-            <div class="card-value">5,72 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">5,72 <span class="card-unit">млн.руб.</span></div>
         </div>
         <div class="summary-card">
             <div class="card-label">Пар (потребление)</div>
             <div class="card-value">6 980,4 <span class="card-unit">Гкал</span></div>
             <div class="card-percent">3,93%</div>
-            <div class="card-value">8,61 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">8,61 <span class="card-unit">млн.руб.</span></div>
         </div>
         <div class="summary-card">
             <div class="card-label">Пар (выработка)</div>
             <div class="card-value">9 381,1 <span class="card-unit">Гкал</span></div>
             <div class="card-percent">2,61%</div>
-            <div class="card-value">4,27 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">4,27 <span class="card-unit">млн.руб.</span></div>
         </div>
         <div class="summary-card">
             <div class="card-label">Газообразное топливо</div>
             <div class="card-value">5 610,6 <span class="card-unit">т</span></div>
             <div class="card-percent">5,92%</div>
-            <div class="card-value">49,93 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">49,93 <span class="card-unit">млн.руб.</span></div>
         </div>
         <div class="summary-card">
             <div class="card-label">Жидкое топливо</div>
             <div class="card-value">410,0 <span class="card-unit">т</span></div>
             <div class="card-percent">1,28%</div>
-            <div class="card-value">3,11 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">3,11 <span class="card-unit">млн.руб.</span></div>
         </div>
         <div class="summary-card highlight">
             <div class="card-label">Всего ТЭР</div>
             <div class="card-value">292 681,5 <span class="card-unit">ГДж</span></div>
             <div class="card-percent">5,14%</div>
-            <div class="card-value">71,65 <span class="card-unit">млн.руб.</span></div>
+            <div class="card-value money-highlight">71,65 <span class="card-unit">млн.руб.</span></div>
         </div>
     </div>
 
-    <!-- Таблица 1: Абсолютные значения -->
+    <!-- Таблица 1: Денежные единицы -->
+    <h3 class="section-title">Потенциал энергосбережения в денежных единицах</h3>
+    <div class="table-wrapper" style="margin-bottom: 2rem;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>№ п/п</th>
+                    <th>Установка</th>
+                    <th>Электрическая энергия, млн.руб.</th>
+                    <th>Пар (потребление), млн.руб.</th>
+                    <th>Пар (выработка), млн.руб.</th>
+                    <th>Газообразное топливо, млн.руб.</th>
+                    <th>Жидкое топливо, млн.руб.</th>
+                    <th>Всего по ТЭР, млн.руб.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>Установка-1</td><td>0,65</td><td>0,97</td><td>0,00</td><td>0,00</td><td>0,00</td><td>1,62</td></tr>
+                <tr><td>2</td><td>Установка-2</td><td>1,27</td><td>1,16</td><td>0,18</td><td>20,26</td><td>0,00</td><td>22,87</td></tr>
+                <tr><td>3</td><td>Установка-3</td><td>2,60</td><td>6,48</td><td>4,09</td><td>16,24</td><td>0,00</td><td>29,41</td></tr>
+                <tr><td>4</td><td>Установка-4</td><td>1,20</td><td>0,00</td><td>0,00</td><td>13,43</td><td>3,11</td><td>17,74</td></tr>
+                <tr class="total-row"><td></td><td><strong>Итого</strong></td><td><strong>5,72</strong></td><td><strong>8,61</strong></td><td><strong>4,27</strong></td><td><strong>49,93</strong></td><td><strong>3,11</strong></td><td><strong>71,65</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Таблица 2: Абсолютные значения -->
     <h3 class="section-title">Потенциал энергосбережения ТЭР в абсолютных величинах</h3>
     <div class="table-wrapper" style="margin-bottom: 2rem;">
         <table class="data-table">
@@ -77,7 +103,7 @@
         </table>
     </div>
 
-    <!-- Таблица 2: Проценты -->
+    <!-- Таблица 3: Проценты -->
     <h3 class="section-title">Потенциал энергосбережения ТЭР в %</h3>
     <div class="table-wrapper" style="margin-bottom: 2rem;">
         <table class="data-table">
@@ -150,6 +176,11 @@
         font-weight: 500;
         color: #0369a1;
         margin-top: 0.2rem;
+    }
+    /* Новый класс для выделения денежных сумм */
+    .money-highlight {
+        font-weight: 700 !important;
+        color: #22a65e !important;  /* цвет зеленой травы */
     }
     .section-title {
         font-size: 1.2rem;
