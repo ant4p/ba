@@ -6,8 +6,8 @@
 {% block content %}
 <div class="graph-container">
     <div class="page-header">
-        <h1 class="page-title">Анализ работы установки</h1>
-        <p class="page-subtitle">Удельные нормы и эффективность использования ТЭР</p>
+        <h1 class="page-title">Анализ работы установок</h1>
+        <p class="page-subtitle">Энергетическая базовая линия, индикаторы энергоэффективности и эффективность использования ТЭР</p>
     </div>
 
     <!-- Панель фильтров -->
@@ -63,7 +63,7 @@
     <!-- Вкладки -->
     <div class="tabs-container">
         <div class="tabs-header">
-            <button class="tab-btn active" data-tab="norms">Удельные нормы по сезонам</button>
+            <button class="tab-btn active" data-tab="norms">Энергетическая базовая линия и индикаторы энергоэффективности</button>
             <button class="tab-btn" data-tab="efficiency">Эффективность использования ТЭР</button>
         </div>
 
@@ -102,19 +102,19 @@
             <!-- 4 графика -->
             <div class="graphs-grid">
                 <div class="graph-card">
-                    <h2 class="graph-title">УР электроэнергии (ЭБЛ)</h2>
+                    <h2 class="graph-title">ЭБЛ для электроэнергии</h2>
                     <canvas id="chartElecEBL"></canvas>
                 </div>
                 <div class="graph-card">
-                    <h2 class="graph-title">УР пара (потребление) (ЭБЛ)</h2>
+                    <h2 class="graph-title">ЭБЛ для пара (потребление)</h2>
                     <canvas id="chartSteamEBL"></canvas>
                 </div>
                 <div class="graph-card">
-                    <h2 class="graph-title">ИЭЭ: электроэнергия</h2>
+                    <h2 class="graph-title">ИЭЭ для электроэнергии</h2>
                     <canvas id="chartElecIEE"></canvas>
                 </div>
                 <div class="graph-card">
-                    <h2 class="graph-title">ИЭЭ: пар (потребление)</h2>
+                    <h2 class="graph-title">ИЭЭ для пара (потребление)</h2>
                     <canvas id="chartSteamIEE"></canvas>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                         <tr>
                             <th rowspan="2" style="vertical-align: middle;">Месяц</th>
                             <th rowspan="2" style="vertical-align: middle;">Год</th>
-                            <th colspan="4" style="text-align: center; border-right: 2px solid #cbd5e1;">Электропотребление</th>
+                            <th colspan="4" style="text-align: center; border-right: 2px solid #cbd5e1;">Потребление электроэнергии</th>
                             <th colspan="4" style="text-align: center; border-right: 2px solid #cbd5e1;">Потребление пара</th>
                             <th colspan="4" style="text-align: center;">Выработка пара</th>
                         </tr>
@@ -155,7 +155,7 @@
             <!-- 3 графика: столбцы = текущая, линия = динамическая, каждый на всю ширину -->
             <div class="efficiency-charts-container">
                 <div class="graph-card" style="width: 100%; height: 400px;">
-                    <h2 class="graph-title">Электропотребление</h2>
+                    <h2 class="graph-title">Потребление электроэнергии</h2>
                     <canvas id="chartEE"></canvas>
                 </div>
                 <div class="graph-card" style="width: 100%; height: 400px; margin-top: 2rem;">
@@ -394,26 +394,26 @@
             }
 
             const elecEBL = [
-                { label: 'Зимний сезон (ЭБЛ)', data: data.ebl.elec.winter },
-                { label: 'Летний сезон (ЭБЛ)', data: data.ebl.elec.summer }
+                { label: 'Зимний сезон', data: data.ebl.elec.winter },
+                { label: 'Летний сезон', data: data.ebl.elec.summer }
             ];
             createChart('chartElecEBL', elecEBL, 'кВт·ч/т', ['rgba(127,193,229,0.6)', 'rgba(203,213,225,0.6)']);
 
             const steamEBL = [
-                { label: 'Зимний сезон (ЭБЛ)', data: data.ebl.steamCons.winter },
-                { label: 'Летний сезон (ЭБЛ)', data: data.ebl.steamCons.summer }
+                { label: 'Зимний сезон', data: data.ebl.steamCons.winter },
+                { label: 'Летний сезон', data: data.ebl.steamCons.summer }
             ];
             createChart('chartSteamEBL', steamEBL, 'тыс.ккал/т', ['rgba(127,193,229,0.6)', 'rgba(203,213,225,0.6)']);
 
             const elecIEE = [
-                { label: 'Зимний ИЭЭ', data: data.iee.elec.winter },
-                { label: 'Летний ИЭЭ', data: data.iee.elec.summer }
+                { label: 'Зимний сезон', data: data.iee.elec.winter },
+                { label: 'Летний сезон', data: data.iee.elec.summer }
             ];
             createChart('chartElecIEE', elecIEE, 'кВт·ч/т', ['rgba(251,191,36,0.6)', 'rgba(148,163,184,0.6)']);
 
             const steamIEE = [
-                { label: 'Зимний ИЭЭ', data: data.iee.steamCons.winter },
-                { label: 'Летний ИЭЭ', data: data.iee.steamCons.summer }
+                { label: 'Зимний сезон', data: data.iee.steamCons.winter },
+                { label: 'Летний сезон', data: data.iee.steamCons.summer }
             ];
             createChart('chartSteamIEE', steamIEE, 'тыс.ккал/т', ['rgba(251,191,36,0.6)', 'rgba(148,163,184,0.6)']);
         }

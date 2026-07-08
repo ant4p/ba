@@ -7,8 +7,8 @@
 <div class="graph-container">
     <!-- Заголовок страницы -->
     <div class="page-header">
-        <h1 class="page-title">Данные потребления и выработки ТЭР по установкам/объектам</h1>
-        <p class="page-subtitle">План/Факт количества сырья, количества и стоимости ТЭР</p>
+        <h1 class="page-title">Данные о потреблении и выработке ТЭР по установкам</h1>
+        <p class="page-subtitle">План/факт количества сырья, количества и стоимости ТЭР</p>
     </div>
 
     <!-- Панель фильтров (установка, месяц, год) -->
@@ -66,6 +66,7 @@
     </div>
 
     <!-- Отдельная таблица для сырья -->
+     <h3 class="section-title">Объем потребления сырья</h3>
     <div class="table-wrapper" style="margin-bottom: 2rem;">
         <table class="data-table summary-info-table" id="rawSummaryTable">
             <thead><tr><th>Наименование</th><th>План, тн</th><th>Факт, тн</th><th>Отклонение, тн</th><th>% отклонения</th></tr></thead>
@@ -441,7 +442,7 @@
         const tbodyInfo = document.getElementById('summaryInfoBody');
         const resources = [
             { name: 'Электроэнергия', plan: costElecSumPlan, fact: costElecSumFact },
-            { name: 'Теплоэнергия', plan: costSteamSumPlan, fact: costSteamSumFact },
+            { name: 'Тепловая энергия', plan: costSteamSumPlan, fact: costSteamSumFact },
             { name: 'Топливо (газ)', plan: costFuelSumPlan, fact: costFuelSumFact },
             { name: 'Итого ТЭР', plan: totalCostPlan, fact: totalCostFact }
         ];
@@ -476,11 +477,11 @@
         if (charts.planDoughnut) charts.planDoughnut.destroy();
         if (charts.factDoughnut) charts.factDoughnut.destroy();
         charts.planDoughnut = new Chart(document.getElementById('planDoughnutChart'), {
-            type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: planData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
+            type: 'doughnut', data: { labels: ['Электроэнергия','Тепловая энергия','Топливо'], datasets: [{ data: planData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '70%' }
         });
         charts.factDoughnut = new Chart(document.getElementById('factDoughnutChart'), {
-            type: 'doughnut', data: { labels: ['Электроэнергия','Теплоэнергия','Топливо'], datasets: [{ data: factData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
+            type: 'doughnut', data: { labels: ['Электроэнергия','Тепловая энергия','Топливо'], datasets: [{ data: factData, backgroundColor: ['rgba(54,162,235,0.7)','rgba(255,206,86,0.7)','rgba(75,192,192,0.7)'], borderColor: '#fff', borderWidth: 2 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, cutout: '70%' }
         });
     }
