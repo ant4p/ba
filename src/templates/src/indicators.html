@@ -128,8 +128,8 @@
                         <tr>
                             <th rowspan="2" style="vertical-align: middle; text-align: center;">Месяц</th>
                             <th rowspan="2" style="vertical-align: middle; text-align: center;">Год</th>
-                            <th colspan="4" style="text-align: center; border-right: 2px solid #cbd5e1;">Потребление электроэнергии</th>
-                            <th colspan="4" style="text-align: center; border-right: 2px solid #cbd5e1;">Потребление пара</th>
+                            <th colspan="4" style="text-align: center;">Потребление электроэнергии</th>
+                            <th colspan="4" style="text-align: center;">Потребление пара</th>
                             <th colspan="4" style="text-align: center;">Выработка пара</th>
                         </tr>
                         <tr>
@@ -577,7 +577,6 @@
                                 borderWidth: 3,
                                 fill: false,
                                 order: 0,
-                                // Для линии используем точку в легенде
                                 pointStyle: 'line'
                             }
                         ]
@@ -591,7 +590,6 @@
                                 labels: {
                                     usePointStyle: true,
                                     padding: 20,
-                                    // Для каждого датасета задаем свой pointStyle
                                     generateLabels: function(chart) {
                                         const data = chart.data;
                                         return data.datasets.map((dataset, i) => ({
@@ -777,6 +775,13 @@
     .efficiency-table td:first-child,
     .efficiency-table td:nth-child(2) {
         text-align: center !important;
+    }
+
+    /* Вертикальные линии между группами столбцов - только для тела таблицы */
+    .efficiency-table tbody td:nth-child(2),
+    .efficiency-table tbody td:nth-child(6),
+    .efficiency-table tbody td:nth-child(10) {
+        border-right: 2px solid #7fc1e5 !important;
     }
 
     .efficiency-table th {

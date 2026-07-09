@@ -279,186 +279,276 @@
         }
     }
 
-    function updateLineCharts() {
-        const unit = document.getElementById('unitSelect').value;
-        const month = document.getElementById('monthSelect').value;
-        const resource = document.getElementById('resourceSelect').value;
-        const data = getData(unit, month);
-        const rawFact = data.raw.fact, rawPlan = data.raw.plan;
-        const resData = getResourceData(unit, month, resource);
-        const factRes = resData.fact, planRes = resData.plan;
-        const costFact = factRes.map(v=>v*resData.tariff);
-        const costPlan = planRes.map(v=>v*resData.tariff);
-        const labels = Array.from({ length: rawFact.length }, (_,i)=>i+1);
-        
-        // Линейный график - Сырье
-        if (charts.rawLine) charts.rawLine.destroy();
-        charts.rawLine = new Chart(document.getElementById('rawLineChart'), {
-            type: 'line', 
-            data: { 
-                labels, 
-                datasets: [
-                    { 
-                        label: 'Факт', 
-                        data: rawFact, 
-                        borderColor: 'rgba(255,140,66,1)', 
-                        backgroundColor: 'rgba(255,140,66,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
-                    },
-                    { 
-                        label: 'План', 
-                        data: rawPlan, 
-                        borderColor: 'rgba(41,128,185,1)', 
-                        backgroundColor: 'rgba(41,128,185,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
+   function updateLineCharts() {
+    const unit = document.getElementById('unitSelect').value;
+    const month = document.getElementById('monthSelect').value;
+    const resource = document.getElementById('resourceSelect').value;
+    const data = getData(unit, month);
+    const rawFact = data.raw.fact, rawPlan = data.raw.plan;
+    const resData = getResourceData(unit, month, resource);
+    const factRes = resData.fact, planRes = resData.plan;
+    const costFact = factRes.map(v=>v*resData.tariff);
+    const costPlan = planRes.map(v=>v*resData.tariff);
+    const labels = Array.from({ length: rawFact.length }, (_,i)=>i+1);
+    
+    // Линейный график - Сырье
+    if (charts.rawLine) charts.rawLine.destroy();
+    charts.rawLine = new Chart(document.getElementById('rawLineChart'), {
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Факт', 
+                    data: rawFact, 
+                    borderColor: 'rgba(255,140,66,1)', 
+                    backgroundColor: 'rgba(255,140,66,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                },
+                { 
+                    label: 'План', 
+                    data: rawPlan, 
+                    borderColor: 'rgba(41,128,185,1)', 
+                    backgroundColor: 'rgba(41,128,185,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'line',
+                        padding: 20
                     }
-                ] 
-            }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'line',
-                            padding: 20
-                        }
-                    } 
                 } 
-            }
-        });
-        
-        // Линейный график - Ресурс
-        if (charts.resourceLine) charts.resourceLine.destroy();
-        charts.resourceLine = new Chart(document.getElementById('resourceLineChart'), {
-            type: 'line', 
-            data: { 
-                labels, 
-                datasets: [
-                    { 
-                        label: 'Факт', 
-                        data: factRes, 
-                        borderColor: 'rgba(241,196,15,1)', 
-                        backgroundColor: 'rgba(241,196,15,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
-                    },
-                    { 
-                        label: 'План', 
-                        data: planRes, 
-                        borderColor: 'rgba(41,128,185,1)', 
-                        backgroundColor: 'rgba(41,128,185,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
+            } 
+        }
+    });
+    
+    // Линейный график - Ресурс
+    if (charts.resourceLine) charts.resourceLine.destroy();
+    charts.resourceLine = new Chart(document.getElementById('resourceLineChart'), {
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Факт', 
+                    data: factRes, 
+                    borderColor: 'rgba(241,196,15,1)', 
+                    backgroundColor: 'rgba(241,196,15,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                },
+                { 
+                    label: 'План', 
+                    data: planRes, 
+                    borderColor: 'rgba(41,128,185,1)', 
+                    backgroundColor: 'rgba(41,128,185,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'line',
+                        padding: 20
                     }
-                ] 
-            }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'line',
-                            padding: 20
-                        }
-                    } 
                 } 
-            }
-        });
-        
-        // Линейный график - Стоимость
-        if (charts.costLine) charts.costLine.destroy();
-        charts.costLine = new Chart(document.getElementById('costLineChart'), {
-            type: 'line', 
-            data: { 
-                labels, 
-                datasets: [
-                    { 
-                        label: 'Факт', 
-                        data: costFact, 
-                        borderColor: 'rgba(46,204,113,1)', 
-                        backgroundColor: 'rgba(46,204,113,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
-                    },
-                    { 
-                        label: 'План', 
-                        data: costPlan, 
-                        borderColor: 'rgba(41,128,185,1)', 
-                        backgroundColor: 'rgba(41,128,185,0.1)', 
-                        fill: true, 
-                        tension: 0.2, 
-                        pointRadius: 2,
-                        pointStyle: 'circle'
+            } 
+        }
+    });
+    
+    // Линейный график - Стоимость
+    if (charts.costLine) charts.costLine.destroy();
+    charts.costLine = new Chart(document.getElementById('costLineChart'), {
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Факт', 
+                    data: costFact, 
+                    borderColor: 'rgba(46,204,113,1)', 
+                    backgroundColor: 'rgba(46,204,113,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                },
+                { 
+                    label: 'План', 
+                    data: costPlan, 
+                    borderColor: 'rgba(41,128,185,1)', 
+                    backgroundColor: 'rgba(41,128,185,0.1)', 
+                    fill: true, 
+                    tension: 0.2, 
+                    pointRadius: 2,
+                    pointStyle: 'circle'
+                }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'line',
+                        padding: 20
                     }
-                ] 
-            }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { 
-                    legend: { 
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'line',
-                            padding: 20
-                        }
-                    } 
                 } 
-            }
-        });
-        
-        document.getElementById('resourceLineTitle').innerHTML = `${resData.name}, ${resData.unit}`;
-        document.getElementById('resourceLineNote').innerHTML = `Динамика фактического и планового потребления ${resData.name.toLowerCase()}.`;
-        document.getElementById('costLineTitle').innerHTML = `Стоимость ${resData.name.toLowerCase()}, руб.`;
-        document.getElementById('costLineNote').innerHTML = `Динамика стоимости ${resData.name.toLowerCase()} (Тариф: ${resData.tariff} руб./${resData.unit})`;
-    }
+            } 
+        }
+    });
+    
+    document.getElementById('resourceLineTitle').innerHTML = `${resData.name}, ${resData.unit}`;
+    document.getElementById('resourceLineNote').innerHTML = `Динамика фактического и планового потребления ${resData.name.toLowerCase()}.`;
+    document.getElementById('costLineTitle').innerHTML = `${resData.name} - стоимость, руб.`;
+    document.getElementById('costLineNote').innerHTML = `Динамика стоимости ${resData.name.toLowerCase()} (Тариф: ${resData.tariff} руб./${resData.unit})`;
+}
+
+function updateBarCharts() {
+    const unit = document.getElementById('unitSelect').value;
+    const month = document.getElementById('monthSelect').value;
+    const resource = document.getElementById('resourceSelect').value;
+    const { fact, plan, unit: unitLabel, tariff, name } = getResourceData(unit, month, resource);
+    const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
+    const costFact = fact.map(v=>v*tariff);
+    const costPlan = plan.map(v=>v*tariff);
+    if (charts.resourceBar) charts.resourceBar.destroy();
+    charts.resourceBar = new Chart(document.getElementById('resourceBarChart'), {
+        type: 'bar', data: { labels, datasets: [
+            { label: 'Факт', data: fact, backgroundColor: 'rgba(241,196,15,0.8)', borderColor: 'rgba(243,156,18,1)', borderWidth: 1 },
+            { label: 'План', data: plan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+        ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unitLabel}` } } } }
+    });
+    document.getElementById('resourceBarTitle').innerHTML = `${name}, ${unitLabel}`;
+    document.getElementById('resourceBarNote').innerHTML = `Сравнение фактического и планового потребления ${name.toLowerCase()}.`;
+    if (charts.costBar) charts.costBar.destroy();
+    charts.costBar = new Chart(document.getElementById('costBarChart'), {
+        type: 'bar', data: { labels, datasets: [
+            { label: 'Факт', data: costFact, backgroundColor: 'rgba(46,204,113,0.8)', borderColor: 'rgba(39,174,96,1)', borderWidth: 1 },
+            { label: 'План', data: costPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
+        ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } } }
+    });
+    document.getElementById('costBarTitle').innerHTML = `${name} - стоимость, руб.`;
+    document.getElementById('costBarNote').innerHTML = `Динамика стоимости ${name.toLowerCase()} (Тариф: ${tariff} руб./${unitLabel})`;
+}
 
     function updateBarCharts() {
-        const unit = document.getElementById('unitSelect').value;
-        const month = document.getElementById('monthSelect').value;
-        const resource = document.getElementById('resourceSelect').value;
-        const { fact, plan, unit: unitLabel, tariff, name } = getResourceData(unit, month, resource);
-        const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
-        const costFact = fact.map(v=>v*tariff);
-        const costPlan = plan.map(v=>v*tariff);
-        if (charts.resourceBar) charts.resourceBar.destroy();
-        charts.resourceBar = new Chart(document.getElementById('resourceBarChart'), {
-            type: 'bar', data: { labels, datasets: [
-                { label: 'Факт', data: fact, backgroundColor: 'rgba(241,196,15,0.8)', borderColor: 'rgba(243,156,18,1)', borderWidth: 1 },
-                { label: 'План', data: plan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
-            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unitLabel}` } } } }
-        });
-        document.getElementById('resourceBarTitle').innerHTML = `${name}, ${unitLabel}`;
-        document.getElementById('resourceBarNote').innerHTML = `Сравнение фактического и планового потребления ${name.toLowerCase()}.`;
-        if (charts.costBar) charts.costBar.destroy();
-        charts.costBar = new Chart(document.getElementById('costBarChart'), {
-            type: 'bar', data: { labels, datasets: [
-                { label: 'Факт', data: costFact, backgroundColor: 'rgba(46,204,113,0.8)', borderColor: 'rgba(39,174,96,1)', borderWidth: 1 },
-                { label: 'План', data: costPlan, backgroundColor: 'rgba(41,128,185,0.8)', borderColor: 'rgba(41,128,185,1)', borderWidth: 1 }
-            ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` } } } }
-        });
-        document.getElementById('costBarTitle').innerHTML = `Стоимость ${name.toLowerCase()}, руб.`;
-        document.getElementById('costBarNote').innerHTML = `Динамика стоимости ${name.toLowerCase()} (Тариф: ${tariff} руб./${unitLabel})`;
-    }
+    const unit = document.getElementById('unitSelect').value;
+    const month = document.getElementById('monthSelect').value;
+    const resource = document.getElementById('resourceSelect').value;
+    const { fact, plan, unit: unitLabel, tariff, name } = getResourceData(unit, month, resource);
+    const labels = Array.from({ length: fact.length }, (_,i)=>i+1);
+    const costFact = fact.map(v=>v*tariff);
+    const costPlan = plan.map(v=>v*tariff);
+    
+    // График 1: Потребление ресурса
+    if (charts.resourceBar) charts.resourceBar.destroy();
+    charts.resourceBar = new Chart(document.getElementById('resourceBarChart'), {
+        type: 'bar', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Факт', 
+                    data: fact, 
+                    backgroundColor: 'rgba(241,196,15,0.8)', 
+                    borderColor: 'rgba(243,156,18,1)', 
+                    borderWidth: 1 
+                },
+                { 
+                    label: 'План', 
+                    data: plan, 
+                    backgroundColor: 'rgba(41,128,185,0.8)', 
+                    borderColor: 'rgba(41,128,185,1)', 
+                    borderWidth: 1 
+                }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { position: 'bottom' }, 
+                tooltip: { 
+                    callbacks: { 
+                        label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(3)} ${unitLabel}` 
+                    } 
+                } 
+            } 
+        }
+    });
+    document.getElementById('resourceBarTitle').innerHTML = `${name}, ${unitLabel}`;
+    document.getElementById('resourceBarNote').innerHTML = `Сравнение фактического и планового потребления ${name.toLowerCase()}.`;
+    
+    // График 2: Стоимость ресурса
+    if (charts.costBar) charts.costBar.destroy();
+    charts.costBar = new Chart(document.getElementById('costBarChart'), {
+        type: 'bar', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Факт', 
+                    data: costFact, 
+                    backgroundColor: 'rgba(46,204,113,0.8)', 
+                    borderColor: 'rgba(39,174,96,1)', 
+                    borderWidth: 1 
+                },
+                { 
+                    label: 'План', 
+                    data: costPlan, 
+                    backgroundColor: 'rgba(41,128,185,0.8)', 
+                    borderColor: 'rgba(41,128,185,1)', 
+                    borderWidth: 1 
+                }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { position: 'bottom' }, 
+                tooltip: { 
+                    callbacks: { 
+                        label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} руб.` 
+                    } 
+                } 
+            } 
+        }
+    });
+    
+    // ИЗМЕНЕНО: теперь название в формате "Ресурс - стоимость, руб."
+    document.getElementById('costBarTitle').innerHTML = `${name} - стоимость, руб.`;
+    document.getElementById('costBarNote').innerHTML = `Динамика стоимости ${name.toLowerCase()} (Тариф: ${tariff} руб./${unitLabel})`;
+}
 
     function updateTable() {
         const unit = document.getElementById('unitSelect').value;
@@ -684,24 +774,30 @@
     .data-table td:first-child, .data-table th:first-child { text-align: center; font-weight: 500; }
     .data-table td { text-align: right; }
     
-    /* Стили для таблицы план/факт с вертикальными линиями в цветах как на предыдущей странице */
-    .plan-fact-table th,
-    .plan-fact-table td {
+    /* Стили для таблицы план/факт с вертикальными линиями - только в теле таблицы */
+    .plan-fact-table tbody td {
         border-right: 1px solid #b9dcf2;
     }
-    .plan-fact-table th:last-child,
-    .plan-fact-table td:last-child {
+    .plan-fact-table tbody td:last-child {
         border-right: none;
     }
-    .plan-fact-table th:first-child,
-    .plan-fact-table td:first-child {
+    .plan-fact-table tbody td:first-child {
         border-right: 2px solid #7fc1e5;
     }
-    .plan-fact-table th:nth-child(5),
-    .plan-fact-table td:nth-child(5),
-    .plan-fact-table th:nth-child(9),
-    .plan-fact-table td:nth-child(9) {
+    .plan-fact-table tbody td:nth-child(5),
+    .plan-fact-table tbody td:nth-child(9) {
         border-right: 2px solid #7fc1e5 !important;
+    }
+    
+    /* Убираем все вертикальные линии в шапке */
+    .plan-fact-table thead th,
+    .plan-fact-table thead td {
+        border-right: none !important;
+    }
+    
+    /* Горизонтальная линия после шапки (перед телом таблицы) */
+    .plan-fact-table thead {
+        border-bottom: 3px solid #7fc1e5 !important;
     }
     
     .graph-card { background: white; border: 1px solid #e9ecef; border-radius: 24px; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; height: 280px; }
