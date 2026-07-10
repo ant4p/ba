@@ -1,4 +1,6 @@
-/* ===== ОСНОВНЫЕ СТИЛИ ===== */
+/* ============================================================
+   ОСНОВНЫЕ СТИЛИ
+   ============================================================ */
 * {
     margin: 0;
     padding: 0;
@@ -13,12 +15,14 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden; /* предотвращает горизонтальную прокрутку при масштабе */
+    overflow-x: hidden;
 }
 
-/* Стили для меню */
+/* ============================================================
+   БОКОВОЕ МЕНЮ
+   ============================================================ */
 .sidebar {
-    width: 280px; /* фиксированная ширина в пикселях – при зуме она масштабируется вместе со страницей */
+    width: 280px;
     min-width: 200px;
     max-width: 350px;
     background-color: #ffffff;
@@ -36,17 +40,63 @@ body {
     z-index: 100;
 }
 
-/* Основной контент с отступом под фиксированное меню */
+.logo {
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #1e2b3c;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0f2fe;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.6rem 0.8rem;
+    text-decoration: none;
+    color: #4a5a6e;
+    font-weight: 400;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #f8fcff;
+    border-color: #cbd5e1;
+    color: #0b2b4a;
+}
+
+.nav-item.active {
+    background-color: #f0f9ff;
+    border-color: #b9dcf2;
+    color: #0369a1;
+}
+
+.nav-divider {
+    height: 1px;
+    background-color: #e9ecef;
+    margin: 0.75rem 0;
+}
+
+/* ============================================================
+   ОСНОВНОЙ КОНТЕНТ
+   ============================================================ */
 .content {
     margin-left: 280px;
     background-color: #ffffff;
     padding: 2.5rem 3rem;
     min-height: 100vh;
     flex: 1;
-    overflow-x: auto; /* позволяет контенту прокручиваться по горизонтали при необходимости */
+    overflow-x: auto;
 }
 
-/* Футер с отступом под меню */
 .site-footer {
     margin-left: 280px;
     flex-shrink: 0;
@@ -56,219 +106,9 @@ body {
     width: calc(100% - 280px);
 }
 
-/* ===== СТИЛИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ===== */
-.home-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-.page-header {
-    text-align: left;
-    margin-bottom: 2.5rem;
-    padding: 0;
-}
-
-.page-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #0f2637;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    color: #64748b;
-    border-bottom: 2px solid #e0f2fe;
-    display: inline-block;
-    padding-bottom: 0.5rem;
-}
-
-.modules-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-.module-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 2rem;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.module-card:hover {
-    border-color: #b9dcf2;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    transform: translateY(-4px);
-}
-
-.module-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background-color: #f8fcff;
-    width: fit-content;
-    padding: 0.5rem;
-    border-radius: 16px;
-    border: 1px solid #e0f2fe;
-}
-
-.module-title {
-    font-size: 1.8rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
-}
-
-.module-description {
-    color: #64748b;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-}
-
-.module-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-}
-
-.feature-tag {
-    background-color: #f8fcff;
-    color: #0369a1;
-    font-size: 0.85rem;
-    padding: 0.25rem 1rem;
-    border-radius: 20px;
-    border: 1px solid #e0f2fe;
-    font-weight: 400;
-}
-
-.module-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
-    background-color: #ffffff;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 40px;
-    color: #0f2637;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    margin-top: auto;
-    width: fit-content;
-}
-
-.module-button:hover {
-    border-color: #7fc1e5;
-    background-color: #f5fcff;
-    color: #0369a1;
-}
-
-.button-arrow {
-    margin-left: 0.5rem;
-    transition: transform 0.2s;
-}
-
-.module-button:hover .button-arrow {
-    transform: translateX(4px);
-}
-
-.info-section {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.info-card {
-    background-color: #f9fafc;
-    border: 1px solid #e9ecef;
-    border-radius: 20px;
-    padding: 1.5rem;
-    transition: border 0.2s;
-}
-
-.info-card:hover {
-    border-color: #b9dcf2;
-}
-
-.info-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 0.75rem;
-}
-
-.info-text {
-    color: #64748b;
-    line-height: 1.5;
-    font-size: 0.95rem;
-}
-
-/* ===== СТИЛИ ДЛЯ ПУНКТОВ МЕНЮ ===== */
-.logo {
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: #1e2b3c;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e0f2fe;
-    display: flex;
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.nav-item {
-    display: block;
-    padding: 0.7rem 0.9rem;
-    text-decoration: none;
-    color: #4a5a6e;
-    font-weight: 400;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.nav-item:hover {
-    background-color: #f8fcff;
-    border-color: #cbd5e1;
-    color: #0b2b4a;
-}
-
-.nav-item.active {
-    background-color: #f0f9ff;
-    border-color: #b9dcf2;
-    color: #0369a1;
-    font-weight: 400;
-}
-
-.nav-divider {
-    height: 1px;
-    background-color: #e9ecef;
-    margin: 0.75rem 0;
-}
-
-.nav-footer {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
-
-/* ===== СТИЛИ ДЛЯ ФУТЕРА ===== */
+/* ============================================================
+   ФУТЕР
+   ============================================================ */
 .footer-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -281,7 +121,7 @@ body {
 
 .footer-copyright {
     color: #68788c;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .footer-links {
@@ -294,7 +134,7 @@ body {
 .footer-link {
     color: #4a5a6e;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: color 0.2s;
     padding: 0.25rem 0;
     border-bottom: 1px solid transparent;
@@ -311,138 +151,205 @@ body {
     margin: 0 0.25rem;
 }
 
-.footer-colors {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+/* ============================================================
+   ЗАГОЛОВКИ СТРАНИЦ
+   ============================================================ */
+.page-header {
+    margin-bottom: 2rem;
+    padding: 0;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #0f2637;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    border-bottom: 2px solid #e0f2fe;
+    display: inline-block;
+    padding-bottom: 0.4rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 1.5rem 0 0.75rem;
+    color: #0f2637;
+}
+
+.graph-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #0f2637;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.graph-note {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    text-align: center;
+    margin-top: 0.3rem;
+}
+
+/* ============================================================
+   ТАБЛИЦЫ — ЕДИНЫЙ СТИЛЬ
+   ============================================================ */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    background: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    background: #ffffff;
+}
+
+/* Шапка таблицы */
+.data-table thead th {
     background-color: #f9fafc;
-    padding: 0.4rem 1rem;
-    border-radius: 40px;
+    font-weight: 500;
+    color: #0f2637;
+    padding: 0.5rem 0.4rem;
+    border-bottom: 1px solid #d5dde5;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.8rem;
+}
+
+/* Ячейки таблицы */
+.data-table tbody td {
+    padding: 0.5rem 0.4rem;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+    vertical-align: middle;
+    color: #1e2b3c;
+    font-size: 0.85rem;
+}
+
+/* Убираем нижнюю границу у последней строки */
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================================
+   ВЕРТИКАЛЬНЫЕ ЛИНИИ В ТАБЛИЦАХ (единый формат)
+   ============================================================ */
+.data-table .v-divider,
+.data-table td.v-divider,
+.data-table th.v-divider {
+    border-right: 2px solid #d5dde5 !important;
+}
+
+.data-table .v-divider-light,
+.data-table td.v-divider-light,
+.data-table th.v-divider-light {
+    border-right: 1px solid #d5dde5 !important;
+}
+
+.data-table td:last-child,
+.data-table th:last-child {
+    border-right: 1px solid #d5dde5 !important;
+}
+
+/* ============================================================
+   ГРУППИРОВКА СТРОК В ТАБЛИЦАХ
+   ============================================================ */
+/* Линия перед группой — применяем к первой ячейке строки */
+.data-table tbody tr.group-start td:first-child {
+    border-top: 2px solid #d5dde5 !important;
+}
+
+/* Чтобы линия проходила через всю строку */
+.data-table tbody tr.group-start td {
+    border-top: 2px solid #d5dde5 !important;
+}
+
+/* Итоговая строка */
+.data-table tbody tr.total-row td {
+    background-color: #f0f9ff;
+    font-weight: 600;
+    border-top: 2px solid #d5dde5 !important;
+}
+
+/* ============================================================
+   ПОДЧИНЕННЫЕ СТРОКИ
+   ============================================================ */
+.data-table .child-row td {
+    background-color: #fafbfc;
+}
+
+.data-table .indent {
+    display: inline-block;
+    padding-left: 1.5rem;
+}
+
+/* Цвета для отклонений */
+.data-table .negative {
+    color: #ef4444 !important;
+    font-weight: 600;
+}
+
+.data-table .positive {
+    color: #10b981 !important;
+    font-weight: 600;
+}
+
+/* ============================================================
+   ФИЛЬТРЫ И ПАНЕЛИ
+   ============================================================ */
+.filters-panel {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    background: #f9fafc;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
     border: 1px solid #e9ecef;
 }
 
-.color-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: inline-block;
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.color-dot-blue {
-    background-color: #b9dcf2;
-    border: 1px solid #7fc1e5;
-}
-
-.color-dot-gray {
-    background-color: #e9ecef;
-    border: 1px solid #cbd5e1;
-}
-
-.color-label {
-    color: #4a5a6e;
+.filter-group label {
     font-size: 0.85rem;
-    margin-left: 0.25rem;
+    color: #4a5a6e;
+    font-weight: 500;
 }
 
-/* ===== АДАПТИВНОСТЬ ===== */
-@media (max-width: 1024px) {
-    .sidebar {
-        width: 220px;
-        padding: 1.5rem 1rem;
-    }
-    .content {
-        margin-left: 220px;
-        padding: 2rem 2rem;
-    }
-    .site-footer {
-        margin-left: 220px;
-        width: calc(100% - 220px);
-    }
-    .modules-grid {
-        gap: 1.5rem;
-    }
-    .module-card {
-        padding: 1.5rem;
-    }
-    .module-title {
-        font-size: 1.5rem;
-    }
+.filter-select {
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #1e2b3c;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: static;
-        border-right: none;
-        border-bottom: 1px solid #e9ecef;
-        padding: 1rem 1.5rem;
-    }
-    .content {
-        margin-left: 0;
-        padding: 1.5rem 1.25rem;
-    }
-    .site-footer {
-        margin-left: 0;
-        width: 100%;
-    }
-    .modules-grid {
-        grid-template-columns: 1fr;
-    }
-    .info-section {
-        grid-template-columns: 1fr;
-    }
-    .page-title {
-        font-size: 2rem;
-    }
-    .page-header {
-        text-align: center;
-    }
-    .module-icon {
-        font-size: 2.5rem;
-    }
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 1rem;
-    }
-    .footer-links {
-        justify-content: center;
-    }
-    .footer-colors {
-        align-self: center;
-    }
+.filter-select:focus {
+    outline: none;
+    border-color: #7fc1e5;
 }
 
-@media (max-width: 480px) {
-    .module-card {
-        padding: 1.25rem;
-    }
-    .module-features {
-        gap: 0.35rem;
-    }
-    .feature-tag {
-        font-size: 0.8rem;
-        padding: 0.2rem 0.75rem;
-    }
-    .module-button {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-        width: 100%;
-        justify-content: center;
-    }
-    .footer-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .footer-separator {
-        display: none;
-    }
-}
-
-/* ===== СТИЛИ ДЛЯ СТРАНИЦЫ ГРАФИКОВ ===== */
+/* ============================================================
+   КАРТОЧКИ И СЕТКИ
+   ============================================================ */
 .graph-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -450,306 +357,417 @@ body {
 }
 
 .graph-card {
-    background-color: #ffffff;
+    background: #ffffff;
     border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-    transition: box-shadow 0.3s ease;
-    height: 500px;
-    position: relative;
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
 }
 
 .graph-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
     border-color: #b9dcf2;
-}
-
-.graph-card canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.data-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-@media (max-width: 768px) {
-    .graph-card {
-        height: 350px;
-        padding: 1rem;
-    }
-    .data-info {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 480px) {
-    .graph-card {
-        height: 300px;
-        padding: 0.75rem;
-    }
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .graphs-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.graph-title {
-    font-size: 1.6rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e0f2fe;
-}
-
-.graph-card canvas {
-    width: 100% !important;
-    height: calc(100% - 60px) !important;
-}
-
-@media (max-width: 768px) {
-    .graph-card {
-        height: 400px;
-        padding: 1rem;
-    }
-    .graph-title {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .graph-card {
-        height: 350px;
-        padding: 0.75rem;
-    }
-}
-
-.detail-section {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 0.5rem;
-}
-
-.section-subtitle {
-    color: #64748b;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-.mini-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-top: 1.5rem;
 }
 
-.mini-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 20px;
-    padding: 1.5rem;
-    transition: border-color 0.2s;
-    height: 280px;
+/* ============================================================
+   ГРАФИКИ (CANVAS) — ФИКСИРОВАННЫЕ РАЗМЕРЫ
+   ============================================================ */
+.graph-card-fixed {
+    height: 360px !important;
+    padding: 1rem !important;
+}
+
+.graph-card-fixed .chart-wrapper {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.graph-card-fixed .chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 280px;
+}
+
+.graph-card-small {
+    height: 240px !important;
+    padding: 0.75rem !important;
+}
+
+.graph-card-small canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 200px;
+}
+
+/* ============================================================
+   ОСНОВНЫЕ ГРАФИКИ В KEYS.HTML
+   ============================================================ */
+.graph-card-keys {
+    height: 420px !important;
+    padding: 1.25rem !important;
+}
+
+.graph-card-keys canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 350px;
+}
+
+/* ============================================================
+   ВКЛАДКИ
+   ============================================================ */
+.tabs-container {
+    margin-top: 1.5rem;
+}
+
+.tabs-header {
     display: flex;
-    flex-direction: column;
+    gap: 0.25rem;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 1.5rem;
 }
 
-.mini-card:hover {
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4a5a6e;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background-color: #f8fcff;
+    color: #0369a1;
+}
+
+.tab-btn.active {
+    color: #0369a1;
+    border-bottom: 2px solid #7fc1e5;
+    background-color: #f0f9ff;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ============================================================
+   ИСПОЛЬЗУЕМЫЕ РЕСУРСЫ
+   ============================================================ */
+.used-resources {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.4rem 1rem;
+    background: #f8fcff;
+    border-radius: 12px;
+    border: 1px solid #e0f2fe;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.used-resources span {
+    font-size: 0.9rem;
+    color: #4a5a6e;
+}
+
+/* ============================================================
+   КАРТОЧКИ СВОДНЫХ ДАННЫХ (potential_es)
+   ============================================================ */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0 2rem;
+}
+
+.summary-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: border-color 0.2s;
+}
+
+.summary-card:hover {
     border-color: #b9dcf2;
 }
 
-.mini-title {
-    font-size: 1.1rem;
+.summary-card.highlight {
+    border-color: #7fc1e5;
+    background-color: #f8fcff;
+}
+
+.card-label {
+    font-size: 0.8rem;
+    color: #4a5a6e;
+    margin-bottom: 0.2rem;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #0f2637;
+    line-height: 1.2;
+    margin-bottom: 0.2rem;
+}
+
+.card-value.money-highlight {
+    color: #22a65e !important;
+}
+
+.card-unit {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #4a5a6e;
+}
+
+.card-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.card-value-small {
+    font-size: 1rem;
     font-weight: 500;
     color: #0f2637;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e0f2fe;
 }
 
-.mini-card canvas {
-    flex: 1;
-    width: 100% !important;
-    min-height: 0;
+.card-unit-small {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: #4a5a6e;
 }
 
-@media (max-width: 768px) {
-    .mini-grid {
-        grid-template-columns: 1fr;
-    }
-    .mini-card {
-        height: 250px;
-    }
+.card-percent {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #0369a1;
+    background: #f0f9ff;
+    padding: 0.05rem 0.5rem;
+    border-radius: 10px;
 }
 
-@media (max-width: 480px) {
-    .mini-card {
-        height: 220px;
-        padding: 1rem;
-    }
-}
-
-/* ===== СТИЛИ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ===== */
+/* ============================================================
+   ГЛАВНАЯ СТРАНИЦА (INDEX)
+   ============================================================ */
 .home-container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0; /* Убираем лишние отступы */
-}
-
-/* Заголовок страницы */
-.page-header {
-    text-align: left; /* Выравнивание по левому краю */
-    margin-bottom: 2.5rem;
     padding: 0;
 }
 
-.page-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #0f2637;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.02em;
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    color: #64748b;
-    border-bottom: 2px solid #e0f2fe;
-    display: inline-block;
-    padding-bottom: 0.5rem;
-}
-
-/* Сетка модулей */
+/* Сетка модулей — 2 колонки */
 .modules-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
 }
 
-/* Карточка модуля */
+/* Ссылка-обертка для всей карточки */
+.module-card-link {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.module-card-link:hover {
+    transform: translateY(-2px);
+}
+
+/* Карточка модуля — минималистичная */
 .module-card {
-    background-color: #ffffff;
+    background: #ffffff;
     border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 2rem;
-    transition: all 0.3s ease;
-    position: relative;
+    border-radius: 12px;
+    padding: 1.25rem 1.25rem 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
 }
 
 .module-card:hover {
     border-color: #b9dcf2;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
+/* Иконка модуля */
 .module-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.6rem;
     background-color: #f8fcff;
-    width: fit-content;
-    padding: 0.5rem;
-    border-radius: 16px;
     border: 1px solid #e0f2fe;
+    border-radius: 10px;
+    flex-shrink: 0;
 }
 
+.module-icon svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+}
+
+/* Заголовок модуля */
 .module-title {
     font-size: 1.8rem;
     font-weight: 500;
     color: #0f2637;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
 }
 
+/* Описание модуля */
 .module-description {
     color: #64748b;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
+    line-height: 1.4;
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+    flex-grow: 1;
 }
 
 /* Теги функций */
 .module-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
+    gap: 0.3rem;
+    margin-top: auto;
 }
 
 .feature-tag {
     background-color: #f8fcff;
     color: #0369a1;
-    font-size: 0.85rem;
-    padding: 0.25rem 1rem;
-    border-radius: 20px;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.6rem;
+    border-radius: 10px;
     border: 1px solid #e0f2fe;
     font-weight: 400;
+    letter-spacing: 0.01em;
 }
 
-/* Кнопка модуля */
-.module-button {
+/* ============================================================
+   ЭКСПОРТ
+   ============================================================ */
+.export-block {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.export-btn {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #1e2b3c;
+    cursor: pointer;
+    transition: all 0.2s;
     display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
-    background-color: #ffffff;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 40px;
-    color: #0f2637;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    margin-top: auto;
-    width: fit-content;
+    gap: 0.4rem;
 }
 
-.module-button:hover {
+.export-btn:hover {
     border-color: #7fc1e5;
-    background-color: #f5fcff;
+    background: #f5fcff;
     color: #0369a1;
 }
 
-.button-arrow {
-    margin-left: 0.5rem;
-    transition: transform 0.2s;
+/* ============================================================
+   ДОНАТ (КРУГОВЫЕ ДИАГРАММЫ)
+   ============================================================ */
+.graph-card.doughnut-card {
+    height: auto;
+    min-height: 280px;
+    justify-content: flex-start;
+    padding: 1rem;
 }
 
-.module-button:hover .button-arrow {
-    transform: translateX(4px);
+.graph-card.doughnut-card canvas {
+    width: 60% !important;
+    height: auto !important;
+    max-height: 240px;
+    margin: 0.25rem auto;
 }
 
-/* Секция с дополнительной информацией */
+/* ============================================================
+   ТАБЛИЦА В PLAN_FACT
+   ============================================================ */
+.plan-fact-table td,
+.plan-fact-table th {
+    padding: 0.25rem 0.3rem !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+}
+
+.plan-fact-table .v-divider {
+    border-right: 1px solid #d5dde5 !important;
+}
+
+.plan-fact-table .v-divider-light {
+    border-right: 1px solid #d5dde5 !important;
+}
+
+.plan-fact-table tbody tr:not(.total-row) td {
+    font-weight: 400 !important;
+}
+
+.plan-fact-table tbody tr.total-row td {
+    font-weight: 600 !important;
+}
+
+/* ============================================================
+   ИНФОРМАЦИОННАЯ СЕКЦИЯ (INDEX)
+   ============================================================ */
 .info-section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
     border-top: 1px solid #e9ecef;
 }
 
 .info-card {
-    background-color: #f9fafc;
+    background: #f9fafc;
     border: 1px solid #e9ecef;
-    border-radius: 20px;
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
     transition: border 0.2s;
 }
 
@@ -758,175 +776,180 @@ body {
 }
 
 .info-title {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: #0f2637;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
 }
 
 .info-text {
     color: #64748b;
     line-height: 1.5;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
-/* ===== СТИЛИ ДЛЯ ПУНКТОВ МЕНЮ ===== */
-.logo {
-    font-size: 1.3rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: #1e2b3c;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e0f2fe;
-    display:flex;
-    
+/* ============================================================
+   МИНИ-ГРАФИКИ (KEYS)
+   ============================================================ */
+.mini-charts-card {
+    height: auto !important;
+    min-height: 260px;
+    padding: 0.6rem 0.75rem 0.75rem !important;
 }
 
-.nav-menu {
+.mini-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    height: auto;
+}
+
+.mini-charts-grid > div {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    height: 100%;
+    min-height: 70px;
 }
 
-.nav-item {
-    display: block;
-    padding: 0.7rem 0.9rem;
-    text-decoration: none;
-    color: #4a5a6e;
-    font-weight: 400;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: abackground-color 0.2s, color 0.2s;
+.mini-charts-grid h3 {
+    font-size: 0.65rem;
+    text-align: center;
+    margin: 0 0 0.05rem 0;
+    color: #1e2b3c;
+    line-height: 1.2;
+    font-weight: 500;
 }
 
-.nav-item:hover {
-    background-color: #f8fcff;
-    border-color: #cbd5e1;
-    color: #0b2b4a;
+.mini-charts-grid canvas {
+    flex: 1;
+    min-height: 50px;
+    width: 100% !important;
 }
 
-.nav-item.active {
-    background-color: #f0f9ff;
-    border-color: #b9dcf2;
-    color: #0369a1;
-    font-weight: 400;
+@media (max-width: 768px) {
+    .mini-charts-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .mini-charts-card {
+        min-height: 220px !important;
+    }
 }
 
-.nav-divider {
-    height: 1px;
-    background-color: #e9ecef;
-    margin: 0.75rem 0;
+@media (max-width: 480px) {
+    .mini-charts-grid h3 {
+        font-size: 0.55rem !important;
+    }
+    .mini-charts-grid canvas {
+        min-height: 40px;
+    }
+    .mini-charts-card {
+        min-height: 180px !important;
+        padding: 0.4rem 0.5rem 0.5rem !important;
+    }
 }
 
-.nav-footer {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
+/* ============================================================
+   ЭФФЕКТИВНОСТЬ (EFFICIENCY CHARTS)
+   ============================================================ */
+.efficiency-charts-container .graph-card {
+    width: 100%;
+    height: 380px;
+    margin-top: 1.5rem;
 }
 
-/* ===== СТИЛИ ДЛЯ ФУТЕРА ===== */
-.footer-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem 2rem;
+.efficiency-charts-container .graph-card:first-child {
+    margin-top: 0;
 }
 
-.footer-copyright {
-    color: #68788c;
-    font-size: 0.95rem;
+@media (max-width: 768px) {
+    .efficiency-charts-container .graph-card {
+        height: 320px;
+    }
 }
 
-.footer-links {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+@media (max-width: 480px) {
+    .efficiency-charts-container .graph-card {
+        height: 280px;
+    }
 }
 
-.footer-link {
-    color: #4a5a6e;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-    padding: 0.25rem 0;
-    border-bottom: 1px solid transparent;
+/* ============================================================
+   ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ТАБЛИЦЫ ЭФФЕКТИВНОСТИ
+   ============================================================ */
+.efficiency-table th,
+.efficiency-table td {
+    text-align: center !important;
 }
 
-.footer-link:hover {
-    color: #0369a1;
-    border-bottom-color: #b9dcf2;
+.efficiency-table th:first-child,
+.efficiency-table th:nth-child(2),
+.efficiency-table td:first-child,
+.efficiency-table td:nth-child(2) {
+    text-align: center !important;
 }
 
-.footer-separator {
-    color: #cbd5e1;
-    font-weight: 300;
-    margin: 0 0.25rem;
+/* Вертикальные линии для таблицы эффективности */
+.efficiency-table tbody td:nth-child(2),
+.efficiency-table tbody td:nth-child(6),
+.efficiency-table tbody td:nth-child(10) {
+    border-right: 2px solid #d5dde5 !important;
 }
 
-.footer-colors {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #f9fafc;
-    padding: 0.4rem 1rem;
-    border-radius: 40px;
-    border: 1px solid #e9ecef;
+.efficiency-table th {
+    border-right: 1px solid #d5dde5;
 }
 
-.color-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: inline-block;
+.efficiency-table th:last-child {
+    border-right: none;
 }
 
-.color-dot-blue {
-    background-color: #b9dcf2;
-    border: 1px solid #7fc1e5;
+.efficiency-table td {
+    border-right: 1px solid #d5dde5;
 }
 
-.color-dot-gray {
-    background-color: #e9ecef;
-    border: 1px solid #cbd5e1;
+.efficiency-table td:last-child {
+    border-right: none;
 }
 
-.color-label {
-    color: #4a5a6e;
-    font-size: 0.85rem;
-    margin-left: 0.25rem;
-}
-
-/* ===== АДАПТИВНОСТЬ ===== */
+/* ============================================================
+   АДАПТИВНОСТЬ
+   ============================================================ */
 @media (max-width: 1024px) {
     .sidebar {
         width: 220px;
         padding: 1.5rem 1rem;
     }
-    
     .content {
         margin-left: 220px;
         padding: 2rem 2rem;
     }
-    
     .site-footer {
         margin-left: 220px;
         width: calc(100% - 220px);
     }
-    
     .modules-grid {
-        gap: 1.5rem;
+        gap: 1rem;
     }
-    
     .module-card {
-        padding: 1.5rem;
+        padding: 1rem;
     }
-    
     .module-title {
-        font-size: 1.5rem;
+        font-size: 0.95rem;
+    }
+    .summary-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+    .graphs-grid {
+        gap: 1rem;
+    }
+    .graph-card-fixed {
+        height: 320px !important;
+    }
+    .graph-card-keys {
+        height: 380px !important;
     }
 }
 
@@ -939,271 +962,202 @@ body {
         border-bottom: 1px solid #e9ecef;
         padding: 1rem 1.5rem;
     }
-    
     .content {
         margin-left: 0;
         padding: 1.5rem 1.25rem;
     }
-    
     .site-footer {
         margin-left: 0;
         width: 100%;
     }
-    
     .modules-grid {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
-    
-    .info-section {
+    .graphs-grid {
         grid-template-columns: 1fr;
     }
-    
-    .page-title {
-        font-size: 2rem;
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
-    
-    .page-header {
-        text-align: center;
-    }
-    
-    .module-icon {
-        font-size: 2.5rem;
-    }
-    
-    .footer-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+    .info-section {
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
-    .footer-links {
-        justify-content: center;
+    .page-title {
+        font-size: 1.6rem;
     }
-    
-    .footer-colors {
-        align-self: center;
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    .graph-card-fixed {
+        height: 300px !important;
+    }
+    .graph-card-small {
+        height: 220px !important;
+    }
+    .graph-card-keys {
+        height: 350px !important;
+    }
+    .graph-card-keys canvas {
+        max-height: 280px;
+    }
+    .used-resources {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    .data-table {
+        font-size: 0.75rem;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 0.3rem 0.25rem;
+    }
+    .filters-panel {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .export-block {
+        justify-content: flex-start;
+    }
+    .graph-card.doughnut-card canvas {
+        width: 80% !important;
     }
 }
 
 @media (max-width: 480px) {
+    .sidebar {
+        padding: 0.75rem 1rem;
+    }
+    .content {
+        padding: 1rem 0.75rem;
+    }
+    .site-footer {
+        padding: 1rem;
+    }
     .module-card {
-        padding: 1.25rem;
+        padding: 0.75rem;
     }
-    
-    .module-features {
-        gap: 0.35rem;
-    }
-    
-    .feature-tag {
-        font-size: 0.8rem;
-        padding: 0.2rem 0.75rem;
-    }
-    
-    .module-button {
-        padding: 0.6rem 1.2rem;
+    .module-title {
         font-size: 0.9rem;
-        width: 100%;
-        justify-content: center;
     }
-    
+    .module-description {
+        font-size: 0.8rem;
+    }
+    .module-icon {
+        width: 30px;
+        height: 30px;
+    }
+    .module-icon svg {
+        width: 15px;
+        height: 15px;
+    }
+    .feature-tag {
+        font-size: 0.6rem;
+        padding: 0.05rem 0.4rem;
+    }
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+    .graph-card-fixed {
+        height: 260px !important;
+        padding: 0.75rem !important;
+    }
+    .graph-card-small {
+        height: 200px !important;
+        padding: 0.5rem !important;
+    }
+    .graph-card-keys {
+        height: 300px !important;
+        padding: 0.75rem !important;
+    }
+    .graph-card-keys canvas {
+        max-height: 230px;
+    }
+    .graph-card.doughnut-card canvas {
+        width: 90% !important;
+    }
+    .page-title {
+        font-size: 1.3rem;
+    }
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+    .data-table {
+        font-size: 0.65rem;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 0.2rem 0.15rem;
+    }
     .footer-links {
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.3rem;
     }
-    
     .footer-separator {
         display: none;
     }
+    .plan-fact-table td,
+    .plan-fact-table th {
+        padding: 0.15rem 0.15rem !important;
+        font-size: 0.6rem !important;
+    }
+    .tab-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    .card-value {
+        font-size: 1.2rem;
+    }
+    .card-value-small {
+        font-size: 0.9rem;
+    }
+    .filter-group label {
+        font-size: 0.8rem;
+    }
+    .filter-select {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+    }
 }
 
-
-
-
-
-
-
-/* ===== СТИЛИ ДЛЯ СТРАНИЦЫ ГРАФИКОВ ===== */
-.graph-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-.graph-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-    transition: box-shadow 0.3s ease;
-    height: 500px; /* Фиксированная высота для графика */
-    position: relative;
-}
-
-.graph-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    border-color: #b9dcf2;
-}
-
-.graph-card canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-.data-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
+/* ============================================================
+   ПЕЧАТЬ
+   ============================================================ */
+@media print {
+    .export-block {
+        display: none;
+    }
+    .filters-panel {
+        display: none;
+    }
+    .tab-btn {
+        display: none;
+    }
+    .tabs-header {
+        display: none;
+    }
+    .tab-content {
+        display: block !important;
+    }
     .graph-card {
-        height: 350px;
+        break-inside: avoid;
+    }
+    .table-wrapper {
+        break-inside: avoid;
+    }
+    .sidebar {
+        display: none;
+    }
+    .content {
+        margin-left: 0;
         padding: 1rem;
     }
-    
-    .data-info {
-        grid-template-columns: 1fr;
+    .site-footer {
+        margin-left: 0;
+        width: 100%;
     }
 }
-
-@media (max-width: 480px) {
-    .graph-card {
-        height: 300px;
-        padding: 0.75rem;
-    }
-}
-
-/* Сетка для графиков */
-.graphs-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.graph-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 24px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    height: 500px;
-    position: relative;
-}
-
-.graph-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    border-color: #b9dcf2;
-}
-
-.graph-title {
-    font-size: 1.6rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e0f2fe;
-}
-
-.graph-card canvas {
-    width: 100% !important;
-    height: calc(100% - 60px) !important;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .graph-card {
-        height: 400px;
-        padding: 1rem;
-    }
-    .graph-title {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .graph-card {
-        height: 350px;
-        padding: 0.75rem;
-    }
-}
-
-/* Детальный блок */
-.detail-section {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 0.5rem;
-}
-
-.section-subtitle {
-    color: #64748b;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-.mini-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.mini-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 20px;
-    padding: 1.5rem;
-    transition: border-color 0.2s;
-    height: 280px;
-    display: flex;
-    flex-direction: column;
-}
-
-.mini-card:hover {
-    border-color: #b9dcf2;
-}
-
-.mini-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #0f2637;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e0f2fe;
-}
-
-.mini-card canvas {
-    flex: 1;
-    width: 100% !important;
-    min-height: 0;
-}
-
-@media (max-width: 768px) {
-    .mini-grid {
-        grid-template-columns: 1fr;
-    }
-    .mini-card {
-        height: 250px;
-    }
-}
-
-@media (max-width: 480px) {
-    .mini-card {
-        height: 220px;
-        padding: 1rem;
-    }
-}
-
