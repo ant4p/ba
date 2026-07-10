@@ -249,7 +249,7 @@ body {
 .data-table .v-divider,
 .data-table td.v-divider,
 .data-table th.v-divider {
-    border-right: 1px solid #d5dde5 !important;
+    border-right: 2px solid #d5dde5 !important;
 }
 
 .data-table .v-divider-light,
