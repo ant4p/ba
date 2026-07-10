@@ -203,7 +203,7 @@ body {
 .table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
-    border: 1px solid #e9ecef;
+    border: 2px solid #e9ecef;
     background: #ffffff;
     margin-bottom: 1.5rem;
 }
@@ -249,7 +249,7 @@ body {
 .data-table .v-divider,
 .data-table td.v-divider,
 .data-table th.v-divider {
-    border-right: 2px solid #d5dde5 !important;
+    border-right: 1px solid #d5dde5 !important;
 }
 
 .data-table .v-divider-light,
@@ -894,7 +894,7 @@ body {
 .efficiency-table tbody td:nth-child(2),
 .efficiency-table tbody td:nth-child(6),
 .efficiency-table tbody td:nth-child(10) {
-    border-right: 2px solid #d5dde5 !important;
+    border-right: 1x solid #d5dde5 !important;
 }
 
 .efficiency-table th {
